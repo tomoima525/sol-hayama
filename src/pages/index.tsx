@@ -1,9 +1,18 @@
+import { useWallet } from "@solana/wallet-adapter-react";
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useEffect } from "react";
 import { Layout } from "../components/layout";
-import { TabLayout } from "../components/tabLayout";
+import { TabLayout } from "../components/TabLayout";
 
 const Home: NextPage = () => {
+  const wallet = useWallet();
+  useEffect(() => {
+    if (wallet.connected) {
+      console.log("====", wallet.publicKey?.toBase58());
+    }
+  });
+
   return (
     <Layout>
       <Head>
