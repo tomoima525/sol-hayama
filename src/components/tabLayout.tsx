@@ -1,6 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { SellerInput } from "./SellerInput";
+import { BuyerInput } from "./BuyerInput";
 
 export const TabLayout = () => {
   const router = useRouter();
@@ -20,8 +22,8 @@ export const TabLayout = () => {
         </div>
       </div>
       <div>
-        {isBuyerTab && <>This is buyer</>}
-        {isSellerTab && <>This is seller</>}
+        {isBuyerTab && <BuyerInput />}
+        {isSellerTab && <SellerInput />}
       </div>
     </>
   );
