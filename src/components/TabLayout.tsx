@@ -7,8 +7,9 @@ import { BuyerInput } from "./BuyerInput";
 export const TabLayout = () => {
   const router = useRouter();
   const { tab } = router.query;
-  const isBuyerTab = tab === "buyer" || tab === null;
+  const isBuyerTab = tab === "buyer" || tab === undefined;
   const isSellerTab = tab === "seller";
+  console.log(isBuyerTab, isSellerTab);
   return (
     <>
       <div className="container mx-auto pt-2 pb-2 flex flex-1 flex-row justify-evenly bg-gray-500">

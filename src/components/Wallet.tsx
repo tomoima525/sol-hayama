@@ -3,14 +3,20 @@ import {
   ConnectionProvider,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { WalletAdapterNetwork, WalletError } from "@solana/wallet-adapter-base";
 import {
   getLedgerWallet,
   getPhantomWallet,
   getSlopeWallet,
   getSolflareWallet,
 } from "@solana/wallet-adapter-wallets";
+import {
+  WalletModalProvider,
+  WalletDisconnectButton,
+  WalletMultiButton,
+} from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
+import toast from "react-hot-toast";
 
 // Default styles that can be overridden by your app
 require("@solana/wallet-adapter-react-ui/styles.css");
@@ -26,8 +32,6 @@ const WalletConnectionProvider: FC<Props> = ({
   localAddress,
   network,
 }: Props) => {
-  // You can also provide a custom RPC endpoint
-
   const endpoint = useMemo(() => {
     if (localAddress) {
       return localAddress;
@@ -47,10 +51,17 @@ const WalletConnectionProvider: FC<Props> = ({
     []
   );
 
+  const onError = (error: WalletError) => {
+    // toast(error.message ? `${error.name}: ${error.message}` : error.name);
+    console.error(error);
+  };
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        {children}
+      <WalletProvider autoConnect wallets={wallets}>
+        <WalletModalProvider>
+          <WalletMultiButton />
+          {children}
+        </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );
