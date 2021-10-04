@@ -315,3 +315,21 @@ export async function createExchangeInstruction({
     ],
   });
 }
+
+export function createCloseAccountInstruction({
+  accountToClose,
+  receiveAmountAccount,
+  owner,
+}: {
+  accountToClose: PublicKey;
+  receiveAmountAccount: PublicKey;
+  owner: PublicKey;
+}): TransactionInstruction {
+  return Token.createCloseAccountInstruction(
+    TOKEN_PROGRAM_ID,
+    accountToClose,
+    receiveAmountAccount,
+    owner,
+    []
+  );
+}
