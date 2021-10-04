@@ -1,5 +1,4 @@
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { Connection } from "@solana/web3.js";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { requestOffer } from "../web3/requestOffer";
@@ -11,6 +10,7 @@ export const BuyerInput = () => {
   const [nftAddress, setNftAddress] = useState("");
   const [sellerAddress, setSellerAddress] = useState("");
   const [isLoading, setLoading] = useState(false);
+
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(e.target.value ? Number(e.target.value) : 0);
   };

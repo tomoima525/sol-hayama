@@ -24,7 +24,7 @@ import {
   TradeEscrowdataArgs,
   TRADE_ESCROW_SCHEMA,
 } from "../schema/escrowdata";
-import { ESCROW_ACCOUNT_DATA_LAYOUT } from "./escrowLayout";
+import { EscrowLayout, ESCROW_ACCOUNT_DATA_LAYOUT } from "./escrowLayout";
 
 /**
  * Initialize TokenAccount before Escrow
@@ -231,4 +231,87 @@ export async function createWrappedNativeAccountInstructions({
     )
   );
   return instructions;
+}
+
+export async function createExchangeInstruction({
+  connection,
+  escrowAccount,
+  pda,
+  programId,
+  seller,
+  sellerNFTAccount,
+  sellerReceiveTokenAccount,
+  expectedSellerReceiveAmount,
+}: {
+  connection: Connection;
+  escrowAccount: PublicKey;
+  pda: PublicKey;
+  programId: PublicKey;
+  seller: PublicKey;
+  sellerNFTAccount: PublicKey;
+  sellerReceiveTokenAccount: PublicKey;
+  expectedSellerReceiveAmount: number;
+}): Promise<TransactionInstruction> {
+  const encodedEscrowState = (
+    await connection.getAccountInfo(escrowAccount, "singleGossip")
+  )?.data;
+  if (!encodedEscrowState) {
+    console.log("Invalid EscrowState");
+    throw new Error("Invalid Escrow State");
+  }
+  const decodedEscrowState = ESCROW_ACCOUNT_DATA_LAYOUT.decode(
+    encodedEscrowState
+  ) as EscrowLayout;
+  const initializerAccount = new PublicKey(
+    decodedEscrowState.initializerPubkey
+  );
+  const initializerReceivingTokenAccount = new PublicKey(
+    decodedEscrowState.initializerReceivingTokenAccountPubkey
+  );
+  const initializerTempToken = new PublicKey(
+    decodedEscrowState.initializerTempTokenAccountPubkey
+  );
+  const data = new Escrowdata(new BN(expectedSellerReceiveAmount));
+  const value = new TradeEscrowdataArgs({ data });
+  const txnData = Buffer.from(serialize(TRADE_ESCROW_SCHEMA, value));
+
+  return new TransactionInstruction({
+    programId,
+    data: txnData,
+    keys: [
+      {
+        pubkey: seller,
+        isSigner: true,
+        isWritable: false,
+      },
+      {
+        pubkey: sellerNFTAccount,
+        isSigner: false,
+        isWritable: true,
+      },
+      {
+        pubkey: sellerReceiveTokenAccount,
+        isSigner: false,
+        isWritable: true,
+      },
+      {
+        pubkey: initializerTempToken,
+        isSigner: false,
+        isWritable: true,
+      },
+      {
+        pubkey: initializerAccount,
+        isSigner: false,
+        isWritable: true,
+      },
+      {
+        pubkey: initializerReceivingTokenAccount,
+        isSigner: false,
+        isWritable: true,
+      },
+      { pubkey: escrowAccount, isSigner: false, isWritable: true },
+      { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+      { pubkey: pda, isSigner: false, isWritable: false },
+    ],
+  });
 }
