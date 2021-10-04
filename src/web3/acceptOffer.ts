@@ -11,7 +11,10 @@ import {
   PublicKey,
   TransactionInstruction,
 } from "@solana/web3.js";
-import { createExchangeInstruction } from "./escrowInstructions";
+import {
+  createCloseAccountInstruction,
+  createExchangeInstruction,
+} from "./escrowInstructions";
 import { generateTransaction, signAndSendTransaction } from "./transaction";
 
 const escrowProgramPublicKey = new PublicKey(
@@ -76,6 +79,23 @@ export async function acceptOffer({
       sellerNFTAccount: associatedAccountForNFT,
       sellerReceiveTokenAccount: associatedAccountForSeller,
       expectedSellerReceiveAmount: amountInLamport,
+    })
+  );
+
+  // Unwrap native wrapped token by closing it
+  instructions.push(
+    createCloseAccountInstruction({
+      accountToClose: associatedAccountForSeller,
+      receiveAmountAccount: seller,
+      owner: seller,
+    })
+  );
+
+  instructions.push(
+    createCloseAccountInstruction({
+      accountToClose: associatedAccountForNFT,
+      receiveAmountAccount: seller,
+      owner: seller,
     })
   );
 
