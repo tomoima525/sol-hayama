@@ -1,4 +1,65 @@
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { acceptOffer } from "../web3/acceptOffer";
+
 export const SellerInput = () => {
+  const { connection } = useConnection();
+  const { publicKey, signTransaction } = useWallet();
+  const [amount, setAmount] = useState(0);
+  const [nftAddress, setNftAddress] = useState("");
+  const [buyerAddress, setBuyerAddress] = useState("");
+  const [escrowAddress, setEscrowAddress] = useState("");
+  const [isLoading, setLoading] = useState(false);
+
+  const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(e.target.value ? Number(e.target.value) : 0);
+  };
+
+  const handleChangeNFTAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNftAddress(e.target.value ? e.target.value.toString() : "");
+  };
+
+  const handleChangeBuyerAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBuyerAddress(e.target.value ? e.target.value.toString() : "");
+  };
+
+  const handleChangeEscrowAddress = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setEscrowAddress(e.target.value ? e.target.value.toString() : "");
+  };
+  const isDisabled = () => {
+    return amount <= 0 || buyerAddress.length === 0 || isLoading;
+  };
+
+  const handleSubmit = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    if (!publicKey || !signTransaction) {
+      // TODO: show error
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await acceptOffer({
+        connection,
+        escrowAccountAddressString: escrowAddress,
+        expectedSellerReceiveAmountInSol: amount,
+        seller: publicKey,
+        sellerNFTAddressStr: nftAddress,
+        signTransaction,
+      });
+      console.log(result);
+    } catch (e) {
+      console.error(e);
+      toast((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="mt-10 sm:mt-0">
       <div className="md:grid md:gap-6">
@@ -26,15 +87,9 @@ export const SellerInput = () => {
                       type="text"
                       name="token-address"
                       id="token-address"
-                      className="mt-1
-                        focus:ring-indigo-500
-                        focus:border-indigo-500
-                        block 
-                        w-full 
-                        shadow-sm 
-                        sm:text-sm
-                        border-gray-300 
-                        rounded-md"
+                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm  sm:text-sm border-gray-300 rounded-md"
+                      onChange={handleChangeNFTAddress}
+                      value={nftAddress}
                     />
                   </div>
 
@@ -50,6 +105,8 @@ export const SellerInput = () => {
                       name="buyer-address"
                       id="buyer-address"
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                      onChange={handleChangeBuyerAddress}
+                      value={buyerAddress}
                     />
                   </div>
 
@@ -65,6 +122,8 @@ export const SellerInput = () => {
                       name="escrow-address"
                       id="escrow-address"
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                      onChange={handleChangeEscrowAddress}
+                      value={escrowAddress}
                     />
                   </div>
 
@@ -81,6 +140,8 @@ export const SellerInput = () => {
                       id="offered-amount"
                       placeholder="1.2"
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                      onChange={handleChangeAmount}
+                      value={amount}
                     />
                   </div>
                 </div>
@@ -89,6 +150,8 @@ export const SellerInput = () => {
                 <button
                   type="submit"
                   className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  disabled={isDisabled()}
+                  onClick={handleSubmit}
                 >
                   Accept Offer
                 </button>
