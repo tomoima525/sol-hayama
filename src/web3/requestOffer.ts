@@ -71,14 +71,19 @@ export async function requestOffer({
     seller
   );
 
-  instructions.push(
-    await createAssociatedAccountInstruction({
-      associatedToken: associatedAccountForSeller,
-      mintToken: NATIVE_MINT,
-      owner: seller,
-      payer: buyer,
-    })
-  );
+  // Check if seller has an associated token for native mint
+  const info = await connection.getAccountInfo(associatedAccountForSeller);
+
+  if (info === null) {
+    instructions.push(
+      await createAssociatedAccountInstruction({
+        associatedToken: associatedAccountForSeller,
+        mintToken: NATIVE_MINT,
+        owner: seller,
+        payer: buyer,
+      })
+    );
+  }
 
   console.log(
     "Associated Token Account for Seller:",
