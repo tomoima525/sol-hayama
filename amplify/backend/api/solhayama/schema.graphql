@@ -1,0 +1,30 @@
+enum TransactionStatus {
+  REQUESTED
+  ACCEPTED
+  CANCELED
+}
+
+type TxHistory
+  @model
+  # Use Cognito UnAuthorized Role
+  @auth(rules: [{ allow: public }])
+  @key(
+    name: "byBuyerAddress"
+    # second field becomes SORT key
+    fields: ["buyerAddress", "createdAt"]
+    queryField: "getTxHistoryByBuyerAddress"
+  )
+  @key(
+    name: "bySellerAddress"
+    fields: ["sellerAddress"]
+    queryField: "getTxHistoryBySellerAddress"
+  ) {
+  id: ID!
+  buyerAddress: String!
+  sellerAddress: String!
+  escrowAddress: String!
+  nftAddress: String!
+  offeredAmount: Float!
+  status: TransactionStatus!
+  createdAt: AWSDateTime!
+}
