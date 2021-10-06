@@ -1,11 +1,15 @@
+import Amplify from "aws-amplify";
 import dynamic from "next/dynamic";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import awsExports from "../aws-exports";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 
 const WalletConnectionProvider = dynamic(() => import("../components/Wallet"), {
   ssr: false,
 });
+
+Amplify.configure(awsExports);
 
 function HayamaApp({ Component, pageProps }: AppProps) {
   const localAddress = "http://localhost:8899";
