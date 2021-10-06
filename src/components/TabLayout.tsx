@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { SellerInput } from "./SellerInput";
 import { BuyerInput } from "./BuyerInput";
+import { Transactions } from "./Transactions";
+import { TransactionType } from "../types";
 
 export const TabLayout = () => {
   const router = useRouter();
@@ -23,8 +25,18 @@ export const TabLayout = () => {
         </div>
       </div>
       <div>
-        {isBuyerTab && <BuyerInput />}
-        {isSellerTab && <SellerInput />}
+        {isBuyerTab && (
+          <div>
+            <BuyerInput />
+            <Transactions address="x" type={TransactionType.Buyer} />
+          </div>
+        )}
+        {isSellerTab && (
+          <div>
+            <SellerInput />
+            <Transactions address="x" type={TransactionType.Seller} />
+          </div>
+        )}
       </div>
     </>
   );
