@@ -3,10 +3,21 @@ import { Transaction } from "./Transaction";
 
 interface TransactionsProps {
   items: TxHistory[] | null;
+  onClickCancel?: ({
+    escrowAddress,
+    id,
+  }: {
+    escrowAddress: string;
+    id: string;
+  }) => any;
   type: TransactionType;
 }
 
-export const Transactions = ({ items, type }: TransactionsProps) => {
+export const Transactions = ({
+  items,
+  onClickCancel,
+  type,
+}: TransactionsProps) => {
   const hasNoItems = !items || items?.length === 0;
   return (
     <div className="flex flex-col">
@@ -38,7 +49,7 @@ export const Transactions = ({ items, type }: TransactionsProps) => {
                     scope="col"
                     className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Offer Amount(SOL)
+                    Offer(SOL)
                   </th>
                   <th
                     scope="col"
@@ -60,7 +71,12 @@ export const Transactions = ({ items, type }: TransactionsProps) => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {items?.map((item) => (
-                  <Transaction key={item?.id} txHistory={item!} type={type} />
+                  <Transaction
+                    key={item?.id}
+                    onClickCancel={onClickCancel}
+                    txHistory={item!}
+                    type={type}
+                  />
                 ))}
               </tbody>
             </table>

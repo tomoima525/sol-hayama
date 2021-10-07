@@ -1,5 +1,6 @@
 import { DateUtils } from "@aws-amplify/core";
 import { TxHistory, TransactionStatus } from "../API";
+import { ModalUserAction, useModalDispatch } from "../contexts/ModalContext";
 import { TransactionType } from "../types";
 
 interface TransactionProps {
@@ -41,6 +42,7 @@ const StatusLogo = ({ status }: { status: TransactionStatus }) => {
 };
 
 export const Transaction = ({ txHistory, type }: TransactionProps) => {
+  const dispatch = useModalDispatch();
   const buyer = shortAddress(txHistory.buyerAddress);
   const seller = shortAddress(txHistory.sellerAddress);
   const nft = shortAddress(txHistory.nftAddress);
@@ -48,6 +50,23 @@ export const Transaction = ({ txHistory, type }: TransactionProps) => {
   const showCancelBtn =
     type === TransactionType.Buyer &&
     txHistory.status === TransactionStatus.REQUESTED;
+
+  const handleClick = () => {
+    if (type === TransactionType.Buyer)
+      dispatch({
+        type: "SHOW_DIALOG",
+        input: {
+          buttonName: "Discard Offer",
+          message: `This will discard your request for NFT:\n${txHistory.nftAddress}`,
+          title: "Discard Offer",
+          props: {
+            type: ModalUserAction.CancelOffer,
+            id: txHistory.id,
+            escrowAddress: txHistory.escrowAddress,
+          },
+        },
+      });
+  };
   return (
     <tr>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -68,9 +87,12 @@ export const Transaction = ({ txHistory, type }: TransactionProps) => {
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
         {showCancelBtn ? (
-          <a href="#" className="text-indigo-600 hover:text-indigo-900">
-            Cancel
-          </a>
+          <button
+            className="text-indigo-600 hover:text-indigo-900"
+            onClick={handleClick}
+          >
+            Discard
+          </button>
         ) : (
           <div className="whitespace-nowrap text-right text-sm text-gray-500">
             -
