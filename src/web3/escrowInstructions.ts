@@ -333,3 +333,61 @@ export function createCloseAccountInstruction({
     []
   );
 }
+
+export async function createCancelInstruction({
+  connection,
+  buyer,
+  escrowAccount,
+  pda,
+  programId,
+}: {
+  connection: Connection;
+  buyer: PublicKey;
+  escrowAccount: PublicKey;
+  pda: PublicKey;
+  programId: PublicKey;
+}): Promise<TransactionInstruction> {
+  const encodedEscrowState = (
+    await connection.getAccountInfo(escrowAccount, "singleGossip")
+  )?.data;
+  if (!encodedEscrowState) {
+    console.log("Invalid EscrowState");
+    throw new Error("Invalid Escrow State");
+  }
+  const decodedEscrowState = ESCROW_ACCOUNT_DATA_LAYOUT.decode(
+    encodedEscrowState
+  ) as EscrowLayout;
+
+  const initializerAccount = new PublicKey(
+    decodedEscrowState.initializerPubkey
+  );
+  if (buyer.toBase58() !== initializerAccount.toBase58()) {
+    console.log("Initializer mismatch");
+    throw new Error("Initializer mismatch");
+  }
+  const initializerTempToken = new PublicKey(
+    decodedEscrowState.initializerTempTokenAccountPubkey
+  );
+
+  return new TransactionInstruction({
+    programId,
+    data: Buffer.from(
+      serialize(CANCEL_ESCROW_SCHEMA, new CancelEscrowdataArgs())
+    ),
+    keys: [
+      {
+        pubkey: initializerAccount,
+        isSigner: true,
+        isWritable: false,
+      },
+      {
+        pubkey: initializerTempToken,
+        isSigner: false,
+        isWritable: true,
+      },
+      { pubkey: escrowAccount, isSigner: false, isWritable: true },
+      { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+      { pubkey: pda, isSigner: false, isWritable: false },
+    ],
+  });
+}
