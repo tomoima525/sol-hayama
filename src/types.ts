@@ -18,7 +18,7 @@ type Primitive =
 type DeepOmitArray<T extends any[], K> = {
   [P in keyof T]: DeepOmit<T[P], K>;
 };
-
+// https://dev.to/applification/how-to-use-amplify-appsync-graphql-types-in-a-react-typescript-app-of
 export type DeepOmit<T, K> = T extends Primitive
   ? T
   : {
