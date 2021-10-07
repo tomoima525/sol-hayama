@@ -14,14 +14,15 @@ const Home: NextPage = () => {
     const toastConnected = async () => {
       if (wallet.connected) {
         console.log("====", wallet.publicKey?.toBase58());
-
         const cluster = await connection.getClusterNodes();
-        toast(`Connected to ${cluster[0].rpc}`);
-        setRpc(cluster[0].rpc);
+        if (rpc !== cluster[0].rpc) {
+          toast(`Connected to ${cluster[0].rpc}`);
+          setRpc(cluster[0].rpc);
+        }
       }
     };
     toastConnected();
-  }, [wallet, connection]);
+  }, [wallet, connection, rpc]);
 
   const formatRpc = rpc !== null ? `(${rpc})` : "";
   return (
