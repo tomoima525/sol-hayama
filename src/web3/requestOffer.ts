@@ -12,6 +12,7 @@ import {
   PublicKey,
   TransactionInstruction,
 } from "@solana/web3.js";
+import { CreateTxHistoryInput, TransactionStatus } from "../API";
 import {
   createAccountInstruction,
   initAccountInstruction,
@@ -25,10 +26,6 @@ import { generateTransaction, signAndSendTransaction } from "./transaction";
 const escrowProgramPublicKey = new PublicKey(
   "HiUeHUfAvcZJvwCAYPvWG7my2r3ZXGtvXUXrc8t7gBru"
 );
-
-interface OfferInfo {
-  escrowAccountPublicKeyStr: string;
-}
 
 export async function requestOffer({
   connection,
@@ -44,7 +41,7 @@ export async function requestOffer({
   sellerNFTAddressStr: string;
   signTransaction: SignerWalletAdapterProps["signTransaction"];
   amountInSol: number;
-}): Promise<OfferInfo> {
+}): Promise<CreateTxHistoryInput> {
   const amountInLamport = amountInSol * LAMPORTS_PER_SOL;
   const instructions: TransactionInstruction[] = [];
 
@@ -176,6 +173,11 @@ export async function requestOffer({
   await connection.confirmTransaction(signature, "confirmed");
 
   return {
-    escrowAccountPublicKeyStr: escrowAccount.publicKey.toBase58(),
+    buyerAddress: buyer.toBase58(),
+    sellerAddress: sellerAddressStr,
+    escrowAddress: escrowAccount.publicKey.toBase58(),
+    nftAddress: sellerNFTAddressStr,
+    offeredAmount: amountInSol,
+    status: TransactionStatus.REQUESTED,
   };
 }
