@@ -1,18 +1,26 @@
+import API from "@aws-amplify/api";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { graphqlOperation } from "aws-amplify";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { createTxHistory } from "../graphql/mutations";
 import { requestOffer } from "../web3/requestOffer";
 
 export const BuyerInput = () => {
   const { connection } = useConnection();
   const { publicKey, signTransaction } = useWallet();
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<number>(-1);
   const [nftAddress, setNftAddress] = useState("");
   const [sellerAddress, setSellerAddress] = useState("");
   const [isLoading, setLoading] = useState(false);
 
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(e.target.value ? Number(e.target.value) : 0);
+    setAmount(Number(e.target.value));
+  };
+
+  const viewAmount = () => {
+    if (amount === -1) return "";
+    return amount;
   };
 
   const handleChangeNFTAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +34,13 @@ export const BuyerInput = () => {
   };
 
   const isDisabled = () => {
-    return amount <= 0 || sellerAddress.length === 0 || isLoading;
+    return amount <= 0 || sellerAddress.length === 0 || isLoading || !publicKey;
+  };
+
+  const resetInputs = () => {
+    setSellerAddress("");
+    setNftAddress("");
+    setAmount(-1);
   };
 
   const handleSubmit = async (
@@ -48,6 +62,8 @@ export const BuyerInput = () => {
         amountInSol: amount,
       });
       console.log(result);
+      await API.graphql(graphqlOperation(createTxHistory, { input: result }));
+      resetInputs();
     } catch (e) {
       console.error(e);
       toast((e as Error).message);
@@ -116,10 +132,9 @@ export const BuyerInput = () => {
                       type="number"
                       name="offered-amount"
                       id="offered-amount"
-                      placeholder="1.2"
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                       onChange={handleChangeAmount}
-                      value={amount}
+                      value={viewAmount()}
                     />
                   </div>
                 </div>
