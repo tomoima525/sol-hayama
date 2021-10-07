@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.4.1",
     "@solana/spl-token": "^0.1.8",
     "@solana/wallet-adapter-base": "^0.6.0",
     "@solana/wallet-adapter-react": "^0.12.3",
