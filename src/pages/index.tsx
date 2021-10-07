@@ -4,7 +4,7 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Layout } from "../components/Layout";
-import { TabLayout } from "../components/TabLayout";
+import { Main } from "../components/Main";
 
 const Home: NextPage = () => {
   const [rpc, setRpc] = useState<string | null>(null);
@@ -34,7 +34,7 @@ const Home: NextPage = () => {
         <h1 className="text-lg bg-red-200 text-pink-500 text-center pt-1 pb-1">
           {`Hayama ${formatRpc}`}
         </h1>
-        <TabLayout />
+        <Main />
       </div>
     </Layout>
   );

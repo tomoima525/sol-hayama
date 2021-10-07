@@ -2,7 +2,6 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import React, { useEffect } from "react";
 import { useTransactions } from "../hooks/useTransactions";
 import { TransactionType } from "../types";
-import { SellerInput } from "./SellerInput";
 import { Transactions } from "./Transactions";
 
 export const SellerTab = () => {
@@ -15,10 +14,5 @@ export const SellerTab = () => {
     }
   });
 
-  return (
-    <div>
-      <SellerInput />
-      <Transactions items={items} type={TransactionType.Seller} />
-    </div>
-  );
+  return <Transactions items={items} type={TransactionType.Seller} />;
 };
