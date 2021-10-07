@@ -57,7 +57,7 @@ const WalletConnectionProvider: FC<Props> = ({
   };
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider autoConnect wallets={wallets}>
+      <WalletProvider wallets={wallets}>
         <WalletModalProvider>
           <WalletMultiButton />
           {children}

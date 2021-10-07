@@ -6,14 +6,19 @@ import { acceptOffer } from "../web3/acceptOffer";
 export const SellerInput = () => {
   const { connection } = useConnection();
   const { publicKey, signTransaction } = useWallet();
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<number>(-1);
   const [nftAddress, setNftAddress] = useState("");
   const [buyerAddress, setBuyerAddress] = useState("");
   const [escrowAddress, setEscrowAddress] = useState("");
   const [isLoading, setLoading] = useState(false);
 
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(e.target.value ? Number(e.target.value) : 0);
+    setAmount(Number(e.target.value));
+  };
+
+  const viewAmount = () => {
+    if (amount === -1) return "";
+    return amount;
   };
 
   const handleChangeNFTAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,6 +36,12 @@ export const SellerInput = () => {
   };
   const isDisabled = () => {
     return amount <= 0 || buyerAddress.length === 0 || isLoading;
+  };
+
+  const resetInputs = () => {
+    setBuyerAddress("");
+    setNftAddress("");
+    setAmount(-1);
   };
 
   const handleSubmit = async (
@@ -52,6 +63,7 @@ export const SellerInput = () => {
         signTransaction,
       });
       console.log(result);
+      resetInputs();
     } catch (e) {
       console.error(e);
       toast((e as Error).message);
@@ -138,10 +150,9 @@ export const SellerInput = () => {
                       type="number"
                       name="offered-amount"
                       id="offered-amount"
-                      placeholder="1.2"
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                       onChange={handleChangeAmount}
-                      value={amount}
+                      value={viewAmount()}
                     />
                   </div>
                 </div>

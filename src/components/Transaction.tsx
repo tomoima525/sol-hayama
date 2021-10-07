@@ -72,9 +72,9 @@ export const Transaction = ({ txHistory, type }: TransactionProps) => {
             Cancel
           </a>
         ) : (
-          <td className="whitespace-nowrap text-right text-sm text-gray-500">
+          <div className="whitespace-nowrap text-right text-sm text-gray-500">
             -
-          </td>
+          </div>
         )}
       </td>
     </tr>

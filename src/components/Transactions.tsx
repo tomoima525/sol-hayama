@@ -1,58 +1,14 @@
 import { GetTxHistoryByBuyerAddressQuery, TransactionStatus } from "../API";
-import { TransactionType } from "../types";
+import { TransactionType, TxHistory } from "../types";
 import { Transaction } from "./Transaction";
 
 interface TransactionsProps {
-  address: string;
+  items: TxHistory[] | null;
   type: TransactionType;
 }
 
-const data: { data: GetTxHistoryByBuyerAddressQuery } = {
-  data: {
-    getTxHistoryByBuyerAddress: {
-      __typename: "ModelTxHistoryConnection",
-      items: [
-        {
-          __typename: "TxHistory",
-          id: "1",
-          buyerAddress: "abcd",
-          createdAt: "2021-10-05T06:38:19.489Z",
-          escrowAddress: "es_abcd3",
-          nftAddress: "nft_abcd3",
-          offeredAmount: 1,
-          sellerAddress: "def3",
-          status: TransactionStatus.REQUESTED,
-          updatedAt: "2021-10-05T06:38:19.489Z",
-        },
-        {
-          __typename: "TxHistory",
-          id: "2",
-          buyerAddress: "abcd",
-          createdAt: "2021-10-05T06:37:50.079Z",
-          escrowAddress: "es_abcd2",
-          nftAddress: "nft_abcd2",
-          offeredAmount: 1,
-          sellerAddress: "def2",
-          status: TransactionStatus.CANCELED,
-          updatedAt: "2021-10-05T06:37:50.079Z",
-        },
-        {
-          __typename: "TxHistory",
-          id: "1",
-          buyerAddress: "abcd",
-          createdAt: "2021-10-05T06:37:06.655Z",
-          escrowAddress: "es_abcd",
-          nftAddress: "nft_abcd",
-          offeredAmount: 1.5,
-          sellerAddress: "def",
-          status: TransactionStatus.ACCEPTED,
-          updatedAt: "2021-10-05T06:37:06.655Z",
-        },
-      ],
-    },
-  },
-};
-export const Transactions = ({ address, type }: TransactionsProps) => {
+export const Transactions = ({ items, type }: TransactionsProps) => {
+  const hasNoItems = !items || items?.length === 0;
   return (
     <div className="mt-10 sm:mt-0">
       <div className="md:grid md:gap-6">
@@ -112,17 +68,20 @@ export const Transactions = ({ address, type }: TransactionsProps) => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {data.data.getTxHistoryByBuyerAddress?.items?.map(
-                        (item) => (
-                          <Transaction
-                            key={item?.id}
-                            txHistory={item!}
-                            type={type}
-                          />
-                        )
-                      )}
+                      {items?.map((item) => (
+                        <Transaction
+                          key={item?.id}
+                          txHistory={item!}
+                          type={type}
+                        />
+                      ))}
                     </tbody>
                   </table>
+                  {hasNoItems && (
+                    <div className="p-6 text-xl text-center font-medium text-gray-500">
+                      There are no transactions.
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
