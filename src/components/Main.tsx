@@ -8,6 +8,7 @@ import { useLoadingDispatch } from "../contexts/LoadingContext";
 import { ActionProps, ModalUserAction } from "../contexts/ModalContext";
 import { updateTxHistory } from "../graphql/mutations";
 import { TransactionType } from "../types";
+import { acceptOffer } from "../web3/acceptOffer";
 import { cancelOffer } from "../web3/cancelOffer";
 import { BuyerInput } from "./BuyerInput";
 import { BuyerTab } from "./BuyerTab";
@@ -62,12 +63,59 @@ export const Main = () => {
     }
   };
 
+  const acceptOfferAction = async ({
+    id,
+    escrowAccountAddressString,
+    amount,
+    nftAddress,
+  }: {
+    id: string;
+    escrowAccountAddressString: string;
+    amount: number;
+    nftAddress: string;
+  }) => {
+    if (!publicKey || !signTransaction) {
+      // TODO: show error
+      return;
+    }
+    loadingDispatch({ type: "SHOW_LOADING" });
+    try {
+      const result = await acceptOffer({
+        connection,
+        escrowAccountAddressString,
+        expectedSellerReceiveAmountInSol: amount,
+        seller: publicKey,
+        sellerNFTAddressStr: nftAddress,
+        signTransaction,
+      });
+      console.log(result);
+      await API.graphql(
+        graphqlOperation(updateTxHistory, {
+          input: { id, status: TransactionStatus.ACCEPTED },
+        })
+      );
+    } catch (e) {
+      console.error(e);
+      toast((e as Error).message);
+    } finally {
+      loadingDispatch({ type: "HIDE_LOADING" });
+    }
+  };
+
   const handleConfirm = async (props: ActionProps) => {
     switch (props.type) {
       case ModalUserAction.CancelOffer: {
         return cancelOfferAction({
           id: props.id,
           escrowAccountAddressString: props.escrowAddress,
+        });
+      }
+      case ModalUserAction.AcceptOffer: {
+        return acceptOfferAction({
+          id: props.id,
+          escrowAccountAddressString: props.escrowAddress,
+          amount: props.amount,
+          nftAddress: props.nftAddress,
         });
       }
     }
