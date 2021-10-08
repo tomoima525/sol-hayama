@@ -4,12 +4,14 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { TransactionStatus } from "../API";
+import { useLoadingDispatch } from "../contexts/LoadingContext";
 import { ActionProps, ModalUserAction } from "../contexts/ModalContext";
 import { updateTxHistory } from "../graphql/mutations";
 import { TransactionType } from "../types";
 import { cancelOffer } from "../web3/cancelOffer";
 import { BuyerInput } from "./BuyerInput";
 import { BuyerTab } from "./BuyerTab";
+import { Loading } from "./dialogs/Loading";
 import { ModalDialog } from "./dialogs/ModalDialog";
 import { SellerTab } from "./SellerTab";
 
@@ -21,7 +23,7 @@ const colors = {
 export const Main = () => {
   const { connection } = useConnection();
   const { publicKey, signTransaction } = useWallet();
-  const [isLoading, setLoading] = useState(false);
+  const loadingDispatch = useLoadingDispatch();
   const [tab, setTab] = useState(TransactionType.Buyer);
 
   const handleSwitchTab = (type: TransactionType) => () => {
@@ -38,7 +40,7 @@ export const Main = () => {
       // TODO: show error
       return;
     }
-    setLoading(true);
+    loadingDispatch({ type: "SHOW_LOADING" });
     try {
       const result = await cancelOffer({
         connection,
@@ -56,7 +58,7 @@ export const Main = () => {
       console.error(e);
       toast((e as Error).message);
     } finally {
-      setLoading(false);
+      loadingDispatch({ type: "HIDE_LOADING" });
     }
   };
 
@@ -106,6 +108,7 @@ export const Main = () => {
         </div>
       </div>
       <ModalDialog onConfirm={handleConfirm} />
+      <Loading />
     </div>
   );
 };
