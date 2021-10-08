@@ -3,16 +3,22 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { graphqlOperation } from "aws-amplify";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { dispatch } from "react-hot-toast/dist/core/store";
+import {
+  useLoadingDispatch,
+  useLoadingState,
+} from "../contexts/LoadingContext";
 import { createTxHistory } from "../graphql/mutations";
 import { requestOffer } from "../web3/requestOffer";
 
 export const BuyerInput = () => {
   const { connection } = useConnection();
   const { publicKey, signTransaction } = useWallet();
+  const loadingDispatch = useLoadingDispatch();
+  const loadingState = useLoadingState();
   const [amount, setAmount] = useState<number>(-1);
   const [nftAddress, setNftAddress] = useState("");
   const [sellerAddress, setSellerAddress] = useState("");
-  const [isLoading, setLoading] = useState(false);
 
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(Number(e.target.value));
@@ -34,7 +40,12 @@ export const BuyerInput = () => {
   };
 
   const isDisabled = () => {
-    return amount <= 0 || sellerAddress.length === 0 || isLoading || !publicKey;
+    return (
+      amount <= 0 ||
+      sellerAddress.length === 0 ||
+      loadingState.show ||
+      !publicKey
+    );
   };
 
   const resetInputs = () => {
@@ -51,7 +62,6 @@ export const BuyerInput = () => {
       // TODO: show error
       return;
     }
-    setLoading(true);
     try {
       const result = await requestOffer({
         connection,
@@ -61,6 +71,7 @@ export const BuyerInput = () => {
         sellerNFTAddressStr: nftAddress,
         amountInSol: amount,
       });
+      loadingDispatch({ type: "SHOW_LOADING" });
       console.log(result);
       await API.graphql(graphqlOperation(createTxHistory, { input: result }));
       resetInputs();
@@ -68,7 +79,7 @@ export const BuyerInput = () => {
       console.error(e);
       toast((e as Error).message);
     } finally {
-      setLoading(false);
+      loadingDispatch({ type: "HIDE_LOADING" });
     }
   };
   return (
