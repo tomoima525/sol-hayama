@@ -14,7 +14,7 @@ const WalletConnectionProvider = dynamic(() => import("../components/Wallet"), {
 Amplify.configure(awsExports);
 
 function HayamaApp({ Component, pageProps }: AppProps) {
-  const localAddress = "http://localhost:8899";
+  const localAddress = process.env.NEXT_PUBLIC_LOCAL_ADDRESS;
   return (
     <LoadingProvider>
       <ModalProvider>
