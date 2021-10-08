@@ -41,31 +41,85 @@ const StatusLogo = ({ status }: { status: TransactionStatus }) => {
   }
 };
 
+interface ActionButtonProps {
+  onClick: () => any;
+  status: TransactionStatus;
+  type: TransactionType;
+}
+const ActionButton = ({ onClick, type, status }: ActionButtonProps) => {
+  if (
+    type === TransactionType.Buyer &&
+    status === TransactionStatus.REQUESTED
+  ) {
+    return (
+      <button
+        className="text-indigo-600 hover:text-indigo-900"
+        onClick={onClick}
+      >
+        Discard
+      </button>
+    );
+  }
+  if (
+    type === TransactionType.Seller &&
+    status === TransactionStatus.REQUESTED
+  ) {
+    return (
+      <button
+        className="text-indigo-600 hover:text-indigo-900"
+        onClick={onClick}
+      >
+        Accept
+      </button>
+    );
+  }
+  return (
+    <div className="w-16 whitespace-nowrap text-center text-sm text-gray-500">
+      -
+    </div>
+  );
+};
+
 export const Transaction = ({ txHistory, type }: TransactionProps) => {
   const dispatch = useModalDispatch();
   const buyer = shortAddress(txHistory.buyerAddress);
   const seller = shortAddress(txHistory.sellerAddress);
   const nft = shortAddress(txHistory.nftAddress);
   const date = new Date(txHistory.createdAt);
-  const showCancelBtn =
-    type === TransactionType.Buyer &&
-    txHistory.status === TransactionStatus.REQUESTED;
 
   const handleClick = () => {
-    if (type === TransactionType.Buyer)
-      dispatch({
-        type: "SHOW_DIALOG",
-        input: {
-          buttonName: "Discard Offer",
-          message: `This will discard your request for NFT:\n${txHistory.nftAddress}`,
-          title: "Discard Offer",
-          props: {
-            type: ModalUserAction.CancelOffer,
-            id: txHistory.id,
-            escrowAddress: txHistory.escrowAddress,
+    switch (type) {
+      case TransactionType.Buyer:
+        dispatch({
+          type: "SHOW_DIALOG",
+          input: {
+            buttonName: "Discard Offer",
+            message: `This will discard your request for NFT:\n${txHistory.nftAddress}`,
+            title: "Discard Offer",
+            props: {
+              type: ModalUserAction.CancelOffer,
+              id: txHistory.id,
+              escrowAddress: txHistory.escrowAddress,
+            },
           },
-        },
-      });
+        });
+      case TransactionType.Seller:
+        dispatch({
+          type: "SHOW_DIALOG",
+          input: {
+            buttonName: "Accept Offer",
+            message: `Do you want to accept an offer for NFT:\n${txHistory.nftAddress}`,
+            title: "Accept Offer",
+            props: {
+              type: ModalUserAction.AcceptOffer,
+              id: txHistory.id,
+              escrowAddress: txHistory.escrowAddress,
+              amount: txHistory.offeredAmount,
+              nftAddress: txHistory.nftAddress,
+            },
+          },
+        });
+    }
   };
   return (
     <tr>
@@ -82,22 +136,15 @@ export const Transaction = ({ txHistory, type }: TransactionProps) => {
         {txHistory.offeredAmount}
       </td>
       <StatusLogo status={txHistory.status} />
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+      <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
         {date.toLocaleString()}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-        {showCancelBtn ? (
-          <button
-            className="text-indigo-600 hover:text-indigo-900"
-            onClick={handleClick}
-          >
-            Discard
-          </button>
-        ) : (
-          <div className="whitespace-nowrap text-right text-sm text-gray-500">
-            -
-          </div>
-        )}
+      <td className="px-3 py-4 whitespace-nowrap text-sm font-medium">
+        <ActionButton
+          type={type}
+          status={txHistory.status}
+          onClick={handleClick}
+        />
       </td>
     </tr>
   );

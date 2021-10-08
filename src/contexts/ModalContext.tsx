@@ -20,6 +20,9 @@ export type ActionProps =
   | {
       type: ModalUserAction.AcceptOffer;
       id: string;
+      amount: number;
+      escrowAddress: string;
+      nftAddress: string;
     };
 type Content = {
   buttonName: string;

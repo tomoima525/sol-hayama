@@ -5,6 +5,7 @@ import {
   TxHistory,
   GetTxHistoryByBuyerAddressQuery,
   GetTxHistoryBySellerAddressQuery,
+  ModelSortDirection,
 } from "../API";
 import {
   getTxHistoryByBuyerAddress,
@@ -22,6 +23,7 @@ export const useTransactions = (
         const response = (await API.graphql(
           graphqlOperation(getTxHistoryByBuyerAddress, {
             buyerAddress: address,
+            sortDirection: ModelSortDirection.DESC,
           })
         )) as { data: GetTxHistoryByBuyerAddressQuery };
         const items = (response.data.getTxHistoryByBuyerAddress?.items ||
@@ -40,6 +42,7 @@ export const useTransactions = (
         const response = (await API.graphql(
           graphqlOperation(getTxHistoryBySellerAddress, {
             sellerAddress: address,
+            sortDirection: ModelSortDirection.DESC,
           })
         )) as { data: GetTxHistoryBySellerAddressQuery };
         const items = (response.data.getTxHistoryBySellerAddress?.items ||
@@ -49,7 +52,7 @@ export const useTransactions = (
         }
       }
     } catch (err) {
-      console.log("error fetching todos");
+      console.log("error fetching seller tx", err);
     }
   }
   switch (type) {

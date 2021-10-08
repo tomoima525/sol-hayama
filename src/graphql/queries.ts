@@ -74,6 +74,7 @@ export const getTxHistoryByBuyerAddress = /* GraphQL */ `
 export const getTxHistoryBySellerAddress = /* GraphQL */ `
   query GetTxHistoryBySellerAddress(
     $sellerAddress: String
+    $createdAt: ModelStringKeyConditionInput
     $sortDirection: ModelSortDirection
     $filter: ModelTxHistoryFilterInput
     $limit: Int
@@ -81,6 +82,7 @@ export const getTxHistoryBySellerAddress = /* GraphQL */ `
   ) {
     getTxHistoryBySellerAddress(
       sellerAddress: $sellerAddress
+      createdAt: $createdAt
       sortDirection: $sortDirection
       filter: $filter
       limit: $limit

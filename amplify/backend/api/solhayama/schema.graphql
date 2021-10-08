@@ -16,7 +16,7 @@ type TxHistory
   )
   @key(
     name: "bySellerAddress"
-    fields: ["sellerAddress"]
+    fields: ["sellerAddress", "createdAt"]
     queryField: "getTxHistoryBySellerAddress"
   ) {
   id: ID!

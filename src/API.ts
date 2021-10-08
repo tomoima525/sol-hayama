@@ -304,6 +304,7 @@ export type GetTxHistoryByBuyerAddressQuery = {
 
 export type GetTxHistoryBySellerAddressQueryVariables = {
   sellerAddress?: string | null,
+  createdAt?: ModelStringKeyConditionInput | null,
   sortDirection?: ModelSortDirection | null,
   filter?: ModelTxHistoryFilterInput | null,
   limit?: number | null,
