@@ -80,11 +80,20 @@ const ActionButton = ({ onClick, type, status }: ActionButtonProps) => {
   );
 };
 
+const AddressLink = ({ address }: { address: string }) => {
+  return (
+    <a
+      href={`https://explorer.solana.com/address/${address}`}
+      target="_blank"
+      rel="noreferrer"
+    >
+      {shortAddress(address)}
+    </a>
+  );
+};
+
 export const Transaction = ({ txHistory, type }: TransactionProps) => {
   const dispatch = useModalDispatch();
-  const buyer = shortAddress(txHistory.buyerAddress);
-  const seller = shortAddress(txHistory.sellerAddress);
-  const nft = shortAddress(txHistory.nftAddress);
   const date = new Date(txHistory.createdAt);
 
   const handleClick = () => {
@@ -123,14 +132,14 @@ export const Transaction = ({ txHistory, type }: TransactionProps) => {
   };
   return (
     <tr>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {buyer}
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hover:text-gray-900">
+        <AddressLink address={txHistory.buyerAddress} />
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {seller}
+        <AddressLink address={txHistory.sellerAddress} />
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {nft}
+        <AddressLink address={txHistory.nftAddress} />
       </td>
       <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
         {txHistory.offeredAmount}

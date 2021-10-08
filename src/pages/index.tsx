@@ -24,16 +24,13 @@ const Home: NextPage = () => {
     toastConnected();
   }, [wallet, connection, rpc]);
 
-  const formatRpc = rpc !== null ? `(${rpc})` : "";
+  const formatRpc = rpc !== null ? `Network: ${rpc}` : "";
   return (
-    <Layout>
+    <Layout formatRpc={formatRpc}>
       <Head>
         <title>hayama-sol</title>
       </Head>
-      <div className="container md mx-auto justify-center">
-        <h1 className="text-lg bg-red-200 text-pink-500 text-center pt-1 pb-1">
-          {`Hayama ${formatRpc}`}
-        </h1>
+      <div className="container mx-auto justify-center">
         <Main />
       </div>
     </Layout>
