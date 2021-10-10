@@ -1,5 +1,14 @@
 import BN from "bn.js";
-export class Escrowdata {
+export class InitEscrowdata {
+  amount: BN;
+  fee: BN;
+
+  constructor(amount: BN, fee: BN) {
+    this.amount = amount;
+    this.fee = fee;
+  }
+}
+export class TradeEscrowdata {
   amount: BN;
 
   constructor(amount: BN) {
@@ -9,9 +18,9 @@ export class Escrowdata {
 
 export class InitEscrowdataArgs {
   instruction = 0;
-  data: Escrowdata;
+  data: InitEscrowdata;
 
-  constructor(args: { data: Escrowdata }) {
+  constructor(args: { data: InitEscrowdata }) {
     this.data = args.data;
   }
 }
@@ -23,24 +32,27 @@ export const INIT_ESCROW_SCHEMA = new Map<any, any>([
       kind: "struct",
       fields: [
         ["instruction", "u8"],
-        ["data", Escrowdata],
+        ["data", InitEscrowdata],
       ],
     },
   ],
   [
-    Escrowdata,
+    InitEscrowdata,
     {
       kind: "struct",
-      fields: [["amount", "u64"]],
+      fields: [
+        ["amount", "u64"],
+        ["fee", "u64"],
+      ],
     },
   ],
 ]);
 
 export class TradeEscrowdataArgs {
   instruction = 1;
-  data: Escrowdata;
+  data: TradeEscrowdata;
 
-  constructor(args: { data: Escrowdata }) {
+  constructor(args: { data: TradeEscrowdata }) {
     this.data = args.data;
   }
 }
@@ -52,12 +64,12 @@ export const TRADE_ESCROW_SCHEMA = new Map<any, any>([
       kind: "struct",
       fields: [
         ["instruction", "u8"],
-        ["data", Escrowdata],
+        ["data", TradeEscrowdata],
       ],
     },
   ],
   [
-    Escrowdata,
+    TradeEscrowdata,
     {
       kind: "struct",
       fields: [["amount", "u64"]],

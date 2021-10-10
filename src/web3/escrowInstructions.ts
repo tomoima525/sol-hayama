@@ -19,12 +19,14 @@ import {
   CancelEscrowdataArgs,
   CANCEL_ESCROW_SCHEMA,
   InitEscrowdataArgs,
-  Escrowdata,
+  InitEscrowdata,
   INIT_ESCROW_SCHEMA,
   TradeEscrowdataArgs,
   TRADE_ESCROW_SCHEMA,
+  TradeEscrowdata,
 } from "../schema/escrowdata";
 import { EscrowLayout, ESCROW_ACCOUNT_DATA_LAYOUT } from "./escrowLayout";
+import { feeTokenAccount } from "../constants";
 
 /**
  * Initialize TokenAccount before Escrow
@@ -37,13 +39,13 @@ export function initAccountInstruction({
   mint,
   mintTokenAccount,
   payer,
-  amount,
+  totalAmount,
 }: {
   tempTokenAccountPublicKey: PublicKey;
   mint: PublicKey;
   mintTokenAccount: PublicKey;
   payer: PublicKey;
-  amount: number;
+  totalAmount: number;
 }): TransactionInstruction[] {
   const initTempAccountInstruction = Token.createInitAccountInstruction(
     TOKEN_PROGRAM_ID,
@@ -57,7 +59,7 @@ export function initAccountInstruction({
     tempTokenAccountPublicKey,
     payer,
     [],
-    amount
+    totalAmount
   );
 
   return [initTempAccountInstruction, transferTokensToTempAccInstruction];
@@ -115,6 +117,7 @@ export function createInitEscrowInstruction({
   escrowAccount,
   escrowProgramId,
   amount,
+  fee,
 }: {
   initializer: PublicKey;
   tempTokenAccount: PublicKey;
@@ -122,8 +125,9 @@ export function createInitEscrowInstruction({
   escrowAccount: PublicKey;
   escrowProgramId: PublicKey;
   amount: number;
+  fee: number;
 }): TransactionInstruction {
-  const data = new Escrowdata(new BN(amount));
+  const data = new InitEscrowdata(new BN(amount), new BN(fee));
   const value = new InitEscrowdataArgs({ data });
   const txnData = Buffer.from(serialize(INIT_ESCROW_SCHEMA, value));
   const keys = [
@@ -192,13 +196,13 @@ export async function createWrappedNativeAccountInstructions({
   nativeAccount,
   owner,
   payer,
-  amount,
+  lamports,
 }: {
   connection: Connection;
   nativeAccount: PublicKey;
   owner: PublicKey;
   payer: PublicKey;
-  amount: number;
+  lamports: number;
 }): Promise<TransactionInstruction[]> {
   const instructions: TransactionInstruction[] = [];
   // Allocate memory for the account
@@ -218,7 +222,7 @@ export async function createWrappedNativeAccountInstructions({
     SystemProgram.transfer({
       fromPubkey: payer,
       toPubkey: nativeAccount,
-      lamports: amount,
+      lamports,
     })
   );
 
@@ -271,7 +275,8 @@ export async function createExchangeInstruction({
   const initializerTempToken = new PublicKey(
     decodedEscrowState.initializerTempTokenAccountPubkey
   );
-  const data = new Escrowdata(new BN(expectedSellerReceiveAmount));
+
+  const data = new TradeEscrowdata(new BN(expectedSellerReceiveAmount));
   const value = new TradeEscrowdataArgs({ data });
   const txnData = Buffer.from(serialize(TRADE_ESCROW_SCHEMA, value));
 
@@ -312,6 +317,7 @@ export async function createExchangeInstruction({
       { pubkey: escrowAccount, isSigner: false, isWritable: true },
       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
       { pubkey: pda, isSigner: false, isWritable: false },
+      { pubkey: feeTokenAccount, isSigner: false, isWritable: true },
     ],
   });
 }

@@ -11,15 +11,12 @@ import {
   PublicKey,
   TransactionInstruction,
 } from "@solana/web3.js";
+import { escrowProgramPublicKey } from "../constants";
 import {
   createCloseAccountInstruction,
   createExchangeInstruction,
 } from "./escrowInstructions";
 import { generateTransaction, signAndSendTransaction } from "./transaction";
-
-const escrowProgramPublicKey = new PublicKey(
-  "HiUeHUfAvcZJvwCAYPvWG7my2r3ZXGtvXUXrc8t7gBru"
-);
 
 export async function acceptOffer({
   connection,
