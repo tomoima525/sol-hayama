@@ -11,5 +11,18 @@
       "StackId": "arn:aws:cloudformation:us-west-2:259024843705:stack/amplify-solhayama-dev-225040/599b5490-21b2-11ec-b9c9-0a1eb8199e0b",
       "AmplifyAppId": "d1xf7cves0bpzs"
     }
+  },
+  "production": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-solhayama-production-143247-authRole",
+      "UnauthRoleArn": "arn:aws:iam::259024843705:role/amplify-solhayama-production-143247-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::259024843705:role/amplify-solhayama-production-143247-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-solhayama-production-143247-deployment",
+      "UnauthRoleName": "amplify-solhayama-production-143247-unauthRole",
+      "StackName": "amplify-solhayama-production-143247",
+      "StackId": "arn:aws:cloudformation:us-west-2:259024843705:stack/amplify-solhayama-production-143247/9db94c60-2a11-11ec-8a0a-0602dc2d42e7",
+      "AmplifyAppId": "d1xf7cves0bpzs"
+    }
   }
 }
