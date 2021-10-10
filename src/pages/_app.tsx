@@ -13,13 +13,24 @@ const WalletConnectionProvider = dynamic(() => import("../components/Wallet"), {
 
 Amplify.configure(awsExports);
 
+const network = () => {
+  switch (process.env.NEXT_PUBLIC_BUILD_ENV) {
+    case "dev":
+      return WalletAdapterNetwork.Devnet;
+    case "prod":
+      return WalletAdapterNetwork.Mainnet;
+    default:
+      return WalletAdapterNetwork.Devnet;
+  }
+};
+
 function HayamaApp({ Component, pageProps }: AppProps) {
   const localAddress = process.env.NEXT_PUBLIC_LOCAL_ADDRESS;
   return (
     <LoadingProvider>
       <ModalProvider>
         <WalletConnectionProvider
-          network={WalletAdapterNetwork.Devnet}
+          network={network()}
           localAddress={localAddress}
         >
           <Component {...pageProps} />
