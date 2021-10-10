@@ -33,9 +33,11 @@ export const Main = () => {
   const cancelOfferAction = async ({
     id,
     escrowAccountAddressString,
+    nftAddress,
   }: {
     id: string;
     escrowAccountAddressString: string;
+    nftAddress: string;
   }) => {
     if (!publicKey || !signTransaction) {
       // TODO: show error
@@ -47,6 +49,7 @@ export const Main = () => {
         connection,
         buyer: publicKey,
         escrowAccountAddressString,
+        nftAddressString: nftAddress,
         signTransaction,
       });
       console.log(result);
@@ -108,6 +111,7 @@ export const Main = () => {
         return cancelOfferAction({
           id: props.id,
           escrowAccountAddressString: props.escrowAddress,
+          nftAddress: props.nftAddress,
         });
       }
       case ModalUserAction.AcceptOffer: {

@@ -109,9 +109,11 @@ export const Transaction = ({ txHistory, type }: TransactionProps) => {
               type: ModalUserAction.CancelOffer,
               id: txHistory.id,
               escrowAddress: txHistory.escrowAddress,
+              nftAddress: txHistory.nftAddress,
             },
           },
         });
+        break;
       case TransactionType.Seller:
         dispatch({
           type: "SHOW_DIALOG",
@@ -128,6 +130,7 @@ export const Transaction = ({ txHistory, type }: TransactionProps) => {
             },
           },
         });
+        break;
     }
   };
   return (

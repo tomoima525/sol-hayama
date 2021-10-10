@@ -16,6 +16,7 @@ export type ActionProps =
       type: ModalUserAction.CancelOffer;
       id: string;
       escrowAddress: string;
+      nftAddress: string;
     }
   | {
       type: ModalUserAction.AcceptOffer;
