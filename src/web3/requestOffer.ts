@@ -13,6 +13,7 @@ import {
   TransactionInstruction,
 } from "@solana/web3.js";
 import { CreateTxHistoryInput, TransactionStatus } from "../API";
+import { escrowProgramPublicKey } from "../constants";
 import {
   createAccountInstruction,
   initAccountInstruction,
@@ -20,12 +21,9 @@ import {
   createInitEscrowInstruction,
   createAssociatedAccountInstruction,
   createWrappedNativeAccountInstructions,
+  createCloseAccountInstruction,
 } from "./escrowInstructions";
 import { generateTransaction, signAndSendTransaction } from "./transaction";
-
-const escrowProgramPublicKey = new PublicKey(
-  "HiUeHUfAvcZJvwCAYPvWG7my2r3ZXGtvXUXrc8t7gBru"
-);
 
 export async function requestOffer({
   connection,
@@ -34,6 +32,7 @@ export async function requestOffer({
   sellerNFTAddressStr,
   signTransaction,
   amountInSol,
+  fee,
 }: {
   connection: Connection;
   buyer: PublicKey;
@@ -41,8 +40,10 @@ export async function requestOffer({
   sellerNFTAddressStr: string;
   signTransaction: SignerWalletAdapterProps["signTransaction"];
   amountInSol: number;
+  fee: number;
 }): Promise<CreateTxHistoryInput> {
-  const amountInLamport = amountInSol * LAMPORTS_PER_SOL;
+  const totalAmountInLamport = (amountInSol + fee) * LAMPORTS_PER_SOL;
+  const feeInLamport = fee * LAMPORTS_PER_SOL;
   const instructions: TransactionInstruction[] = [];
 
   const seller = new PublicKey(sellerAddressStr);
@@ -57,7 +58,7 @@ export async function requestOffer({
       nativeAccount: mintTokenAccount.publicKey,
       owner: buyer,
       payer: buyer,
-      amount: amountInLamport,
+      lamports: totalAmountInLamport,
     }))
   );
 
@@ -124,7 +125,7 @@ export async function requestOffer({
       payer: buyer,
       mint: NATIVE_MINT,
       mintTokenAccount: mintTokenAccount.publicKey,
-      amount: amountInLamport,
+      totalAmount: totalAmountInLamport,
     })
   );
 
@@ -148,6 +149,16 @@ export async function requestOffer({
       escrowAccount: escrowAccount.publicKey,
       escrowProgramId: escrowProgramPublicKey,
       amount: 1, // NFT amount is one
+      fee: feeInLamport,
+    })
+  );
+
+  console.log("clean up wrapped token associated account");
+  instructions.push(
+    createCloseAccountInstruction({
+      accountToClose: mintTokenAccount.publicKey,
+      receiveAmountAccount: buyer,
+      owner: buyer,
     })
   );
 

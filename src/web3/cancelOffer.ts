@@ -6,22 +6,24 @@ import {
 } from "@solana/spl-token";
 import { SignerWalletAdapterProps } from "@solana/wallet-adapter-base";
 import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
-import { createCancelInstruction } from "./escrowInstructions";
+import { escrowProgramPublicKey } from "../constants";
+import {
+  createCancelInstruction,
+  createCloseAccountInstruction,
+} from "./escrowInstructions";
 import { generateTransaction, signAndSendTransaction } from "./transaction";
-
-const escrowProgramPublicKey = new PublicKey(
-  "HiUeHUfAvcZJvwCAYPvWG7my2r3ZXGtvXUXrc8t7gBru"
-);
 
 export async function cancelOffer({
   connection,
   buyer,
   escrowAccountAddressString,
+  nftAddressString,
   signTransaction,
 }: {
   connection: Connection;
   buyer: PublicKey;
   escrowAccountAddressString: string;
+  nftAddressString: string;
   signTransaction: SignerWalletAdapterProps["signTransaction"];
 }): Promise<void> {
   const instructions: TransactionInstruction[] = [];
@@ -34,7 +36,7 @@ export async function cancelOffer({
   );
 
   console.log("Get Program Derived AccessToken:", PDA[0].toBase58());
-  console.log("Exchange Escrow");
+  console.log("Cancel Escrow");
 
   instructions.push(
     await createCancelInstruction({
@@ -43,6 +45,25 @@ export async function cancelOffer({
       pda: PDA[0],
       escrowAccount,
       programId: escrowProgramPublicKey,
+    })
+  );
+  const nft = new PublicKey(nftAddressString);
+
+  const associatedAccountForNFT = await Token.getAssociatedTokenAddress(
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    TOKEN_PROGRAM_ID,
+    nft,
+    buyer
+  );
+
+  console.log({ associatedAccountForNFT: associatedAccountForNFT.toBase58() });
+
+  // Close associated account for NFT
+  instructions.push(
+    createCloseAccountInstruction({
+      accountToClose: associatedAccountForNFT,
+      receiveAmountAccount: buyer,
+      owner: buyer,
     })
   );
 
