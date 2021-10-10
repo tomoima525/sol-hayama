@@ -12,6 +12,7 @@ import {
   PublicKey,
   TransactionInstruction,
 } from "@solana/web3.js";
+import BigNumber from "bignumber.js";
 import { CreateTxHistoryInput, TransactionStatus } from "../API";
 import { escrowProgramPublicKey } from "../constants";
 import {
@@ -42,7 +43,10 @@ export async function requestOffer({
   amountInSol: number;
   fee: number;
 }): Promise<CreateTxHistoryInput> {
-  const totalAmountInLamport = (amountInSol + fee) * LAMPORTS_PER_SOL;
+  const totalAmountInLamport = new BigNumber(amountInSol)
+    .plus(new BigNumber(fee))
+    .multipliedBy(LAMPORTS_PER_SOL)
+    .toNumber();
   const feeInLamport = fee * LAMPORTS_PER_SOL;
   const instructions: TransactionInstruction[] = [];
 

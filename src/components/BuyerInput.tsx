@@ -1,8 +1,10 @@
 import API from "@aws-amplify/api";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { graphqlOperation } from "aws-amplify";
+import BigNumber from "bignumber.js";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { feePercentage } from "../constants";
 import {
   useLoadingDispatch,
   useLoadingState,
@@ -24,7 +26,11 @@ export const BuyerInput = () => {
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
     setAmount(value);
-    setFee(value * Number(process.env.NEXT_PUBLIC_FEE_PERCENTAGE));
+    const v = new BigNumber(value);
+
+    const fee = v.multipliedBy(feePercentage);
+    console.log({ fee, num: fee.toNumber() });
+    setFee(fee.toNumber());
   };
 
   const handleChangeNFTAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,6 +91,7 @@ export const BuyerInput = () => {
       loadingDispatch({ type: "HIDE_LOADING" });
     }
   };
+
   return (
     <div className="mt-10 sm:mt-0">
       <div className="md:grid md:gap-6">
@@ -147,6 +154,7 @@ export const BuyerInput = () => {
                       id="offered-amount"
                       type="number"
                       name="offered-amount"
+                      step="0.1"
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                       onChange={handleChangeAmount}
                     />
@@ -155,7 +163,7 @@ export const BuyerInput = () => {
               </div>
               <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                 <div className="text-md font-medium text-gray-900">
-                  {`Total: ${amount + fee} SOL(fee:${fee})`}
+                  {`Total: ${new BigNumber(amount).plus(fee)} SOL(fee:${fee})`}
                 </div>
                 <div className="text-xs font-medium text-gray-700 py-1">
                   4.0% tx fee is included. Charged after Offer accepted by
