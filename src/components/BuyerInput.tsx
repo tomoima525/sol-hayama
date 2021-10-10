@@ -11,7 +11,6 @@ import {
 } from "../contexts/LoadingContext";
 import { createTxHistory } from "../graphql/mutations";
 import { requestOffer } from "../web3/requestOffer";
-
 export const BuyerInput = () => {
   const { connection } = useConnection();
   const { publicKey, signTransaction } = useWallet();
@@ -21,6 +20,7 @@ export const BuyerInput = () => {
   const [fee, setFee] = useState<number>(0);
   const [nftAddress, setNftAddress] = useState("");
   const [sellerAddress, setSellerAddress] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const amountInputRef = useRef<HTMLInputElement>(null);
 
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +29,6 @@ export const BuyerInput = () => {
     const v = new BigNumber(value);
 
     const fee = v.multipliedBy(feePercentage);
-    console.log({ fee, num: fee.toNumber() });
     setFee(fee.toNumber());
   };
 
@@ -57,17 +56,31 @@ export const BuyerInput = () => {
     setNftAddress("");
     setAmount(0);
     setFee(0);
+    setErrorMessage("");
     if (amountInputRef.current) {
       amountInputRef.current.value = "";
     }
+  };
+
+  const isValidAmount = (amt: number) => {
+    const decimal = new BigNumber(amt).mod(1).toString();
+    return decimal.length < 4;
   };
 
   const handleSubmit = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
+    setErrorMessage("");
+
     if (!publicKey || !signTransaction) {
-      // TODO: show error
+      setErrorMessage(
+        "Wallet is not connected properly. Re-connect your wallet."
+      );
+      return;
+    }
+    if (!isValidAmount(amount)) {
+      setErrorMessage("Offer amount accepts one decimal. Try rounding up.");
       return;
     }
     try {
@@ -86,7 +99,7 @@ export const BuyerInput = () => {
       resetInputs();
     } catch (e) {
       console.error(e);
-      toast((e as Error).message);
+      setErrorMessage((e as Error).message);
     } finally {
       loadingDispatch({ type: "HIDE_LOADING" });
     }
@@ -152,9 +165,9 @@ export const BuyerInput = () => {
                     <input
                       ref={amountInputRef}
                       id="offered-amount"
-                      type="number"
+                      maxLength={3}
                       name="offered-amount"
-                      step="0.1"
+                      type="number"
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                       onChange={handleChangeAmount}
                     />
@@ -169,6 +182,11 @@ export const BuyerInput = () => {
                   4.0% tx fee is included. Charged after Offer accepted by
                   Seller.
                 </div>
+                {errorMessage.length > 0 && (
+                  <div className="text-sm font-medium text-red-700 py-2">
+                    {errorMessage}
+                  </div>
+                )}
                 <button
                   type="submit"
                   className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
