@@ -1,9 +1,8 @@
 import API from "@aws-amplify/api";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { graphqlOperation } from "aws-amplify";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { dispatch } from "react-hot-toast/dist/core/store";
 import {
   useLoadingDispatch,
   useLoadingState,
@@ -16,17 +15,16 @@ export const BuyerInput = () => {
   const { publicKey, signTransaction } = useWallet();
   const loadingDispatch = useLoadingDispatch();
   const loadingState = useLoadingState();
-  const [amount, setAmount] = useState<number>(-1);
+  const [amount, setAmount] = useState<number>(0);
+  const [fee, setFee] = useState<number>(0);
   const [nftAddress, setNftAddress] = useState("");
   const [sellerAddress, setSellerAddress] = useState("");
+  const amountInputRef = useRef<HTMLInputElement>(null);
 
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(Number(e.target.value));
-  };
-
-  const viewAmount = () => {
-    if (amount === -1) return "";
-    return amount;
+    const value = Number(e.target.value);
+    setAmount(value);
+    setFee(value * Number(process.env.NEXT_PUBLIC_FEE_PERCENTAGE));
   };
 
   const handleChangeNFTAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +49,11 @@ export const BuyerInput = () => {
   const resetInputs = () => {
     setSellerAddress("");
     setNftAddress("");
-    setAmount(-1);
+    setAmount(0);
+    setFee(0);
+    if (amountInputRef.current) {
+      amountInputRef.current.value = "";
+    }
   };
 
   const handleSubmit = async (
@@ -70,6 +72,7 @@ export const BuyerInput = () => {
         sellerAddressStr: sellerAddress,
         sellerNFTAddressStr: nftAddress,
         amountInSol: amount,
+        fee,
       });
       loadingDispatch({ type: "SHOW_LOADING" });
       console.log(result);
@@ -140,17 +143,24 @@ export const BuyerInput = () => {
                       Offer Amount(Sol)
                     </label>
                     <input
+                      ref={amountInputRef}
+                      id="offered-amount"
                       type="number"
                       name="offered-amount"
-                      id="offered-amount"
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                       onChange={handleChangeAmount}
-                      value={viewAmount()}
                     />
                   </div>
                 </div>
               </div>
               <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                <div className="text-md font-medium text-gray-900">
+                  {`Total: ${amount + fee} SOL(fee:${fee})`}
+                </div>
+                <div className="text-xs font-medium text-gray-700 py-1">
+                  4.0% tx fee is included. Charged after Offer accepted by
+                  Seller.
+                </div>
                 <button
                   type="submit"
                   className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
