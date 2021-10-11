@@ -3,7 +3,6 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { graphqlOperation } from "aws-amplify";
 import BigNumber from "bignumber.js";
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 import { feePercentage } from "../constants";
 import {
   useLoadingDispatch,
