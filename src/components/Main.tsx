@@ -14,6 +14,7 @@ import { BuyerInput } from "./BuyerInput";
 import { BuyerTab } from "./BuyerTab";
 import { Loading } from "./dialogs/Loading";
 import { ModalDialog } from "./dialogs/ModalDialog";
+import { SearchNFT } from "./SearchNFT";
 import { SellerTab } from "./SellerTab";
 
 const colors = {
@@ -127,6 +128,7 @@ export const Main = () => {
 
   return (
     <div>
+      <SearchNFT />
       <BuyerInput />
       <div className="mt-6 sm:mt-6">
         <div className="p-4 sm:px-0 sm:py-3">

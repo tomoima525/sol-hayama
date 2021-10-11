@@ -32,3 +32,19 @@ export type DeepOmit<T, K> = T extends Primitive
     };
 
 export type TxHistory = Exclude<GetTxHistoryQuery["getTxHistory"], null>;
+
+/*
+    Taken from: https://github.com/metaplex-foundation/metaplex/blob/master/js/packages/common/src/actions/metadata.ts
+*/
+export type StringPublicKey = string;
+
+export const METADATA_PREFIX = "metadata";
+
+export enum MetadataKey {
+  Uninitialized = 0,
+  MetadataV1 = 4,
+  EditionV1 = 1,
+  MasterEditionV1 = 2,
+  MasterEditionV2 = 6,
+  EditionMarker = 7,
+}
