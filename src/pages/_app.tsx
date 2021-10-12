@@ -4,8 +4,10 @@ import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import awsExports from "../aws-exports";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { ModalProvider } from "../contexts/ModalContext";
 import { LoadingProvider } from "../contexts/LoadingContext";
+import { ModalProvider } from "../contexts/ModalContext";
+import { SearchProvider } from "../contexts/SearchContext";
+import React from "react";
 
 const WalletConnectionProvider = dynamic(() => import("../components/Wallet"), {
   ssr: false,
@@ -29,12 +31,14 @@ function HayamaApp({ Component, pageProps }: AppProps) {
   return (
     <LoadingProvider>
       <ModalProvider>
-        <WalletConnectionProvider
-          network={network()}
-          localAddress={localAddress}
-        >
-          <Component {...pageProps} />
-        </WalletConnectionProvider>
+        <SearchProvider>
+          <WalletConnectionProvider
+            network={network()}
+            localAddress={localAddress}
+          >
+            <Component {...pageProps} />
+          </WalletConnectionProvider>
+        </SearchProvider>
       </ModalProvider>
     </LoadingProvider>
   );
