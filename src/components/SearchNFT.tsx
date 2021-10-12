@@ -1,5 +1,6 @@
 import { useConnection } from "@solana/wallet-adapter-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchDispatch, useSearchState } from "../contexts/SearchContext";
 import { useMetadata } from "../hooks/useMetadata";
 import { NFTCard } from "./NFTcard";
 
@@ -7,7 +8,19 @@ export const SearchNFT = () => {
   const { connection } = useConnection();
   const [metadataList, fetchMetadata] = useMetadata();
   const [sellerAddress, setSellerAddress] = useState("");
+  const searchState = useSearchState();
+  const searchDispatch = useSearchDispatch();
 
+  useEffect(() => {
+    if (searchState) {
+      console.log("===", { searchState });
+      fetchMetadata({
+        connection,
+        ownerAddress: searchState,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const handleChangeSellerAddress = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -26,6 +39,7 @@ export const SearchNFT = () => {
       connection,
       ownerAddress: sellerAddress,
     });
+    searchDispatch(sellerAddress);
   };
   return (
     <div className="mt-10 sm:mt-0">
