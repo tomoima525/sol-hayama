@@ -1,4 +1,6 @@
 import {
+  AccountInfo,
+  AccountLayout,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   NATIVE_MINT,
   Token,
@@ -26,6 +28,20 @@ import {
 } from "./escrowInstructions";
 import { generateTransaction, signAndSendTransaction } from "./transaction";
 
+const checkExistanceOfAssociatedAccount = async (
+  connection: Connection,
+  associatedAccount: PublicKey,
+  nftAddress: string
+) => {
+  const accountInfo = await connection.getAccountInfo(associatedAccount);
+
+  if (accountInfo === null) return false;
+  if (accountInfo.data.length !== AccountLayout.span) return false;
+  const data = Buffer.from(accountInfo.data);
+  const decodeAccountInfo: AccountInfo = AccountLayout.decode(data);
+  const mint = new PublicKey(decodeAccountInfo.mint);
+  return mint.toBase58() === nftAddress;
+};
 export async function requestOffer({
   connection,
   buyer,
@@ -99,15 +115,21 @@ export async function requestOffer({
       sellerNFTAddress,
       buyer
     );
-
-  instructions.push(
-    await createAssociatedAccountInstruction({
-      associatedToken: associatedAccountForReceivingNFT,
-      mintToken: sellerNFTAddress,
-      owner: buyer,
-      payer: buyer,
-    })
+  const hasAssociatedAccount = await checkExistanceOfAssociatedAccount(
+    connection,
+    associatedAccountForReceivingNFT,
+    sellerNFTAddressStr
   );
+  if (!hasAssociatedAccount) {
+    instructions.push(
+      await createAssociatedAccountInstruction({
+        associatedToken: associatedAccountForReceivingNFT,
+        mintToken: sellerNFTAddress,
+        owner: buyer,
+        payer: buyer,
+      })
+    );
+  }
 
   console.log(
     "Associated Token Account for Buyer",
