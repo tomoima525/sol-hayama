@@ -13,7 +13,6 @@ const Home: NextPage = () => {
   useEffect(() => {
     const toastConnected = async () => {
       if (wallet.connected) {
-        console.log("====", wallet.publicKey?.toBase58());
         const cluster = await connection.getClusterNodes();
         if (rpc !== cluster[0].rpc) {
           toast(`Connected to ${cluster[0].rpc}`);

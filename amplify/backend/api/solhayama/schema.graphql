@@ -18,6 +18,11 @@ type TxHistory
     name: "bySellerAddress"
     fields: ["sellerAddress", "createdAt"]
     queryField: "getTxHistoryBySellerAddress"
+  )
+  @key(
+    name: "byNFTAddress"
+    fields: ["nftAddress"]
+    queryField: "getTxHistoryByNFTAddress"
   ) {
   id: ID!
   buyerAddress: String!

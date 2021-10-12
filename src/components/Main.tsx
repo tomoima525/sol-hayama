@@ -129,7 +129,6 @@ export const Main = () => {
   return (
     <div>
       <SearchNFT />
-      <BuyerInput />
       <div className="mt-6 sm:mt-6">
         <div className="p-4 sm:px-0 sm:py-3">
           <h3 className="text-lg font-medium  text-gray-900">Transactions</h3>
