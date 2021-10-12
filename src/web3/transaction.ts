@@ -28,7 +28,6 @@ export async function signAndSendTransaction(
   transaction: Transaction
 ): Promise<string> {
   const signedTrans = await signTransaction(transaction);
-  console.log("=====", { signedTrans });
   const signature = await connection.sendRawTransaction(
     signedTrans.serialize()
   );

@@ -7,13 +7,12 @@ import { NFTCard } from "./NFTcard";
 export const SearchNFT = () => {
   const { connection } = useConnection();
   const [metadataList, fetchMetadata] = useMetadata();
-  const [sellerAddress, setSellerAddress] = useState("");
   const searchState = useSearchState();
   const searchDispatch = useSearchDispatch();
+  const [sellerAddress, setSellerAddress] = useState(searchState || "");
 
   useEffect(() => {
     if (searchState) {
-      console.log("===", { searchState });
       fetchMetadata({
         connection,
         ownerAddress: searchState,

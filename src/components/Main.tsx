@@ -46,14 +46,13 @@ export const Main = () => {
     }
     loadingDispatch({ type: "SHOW_LOADING" });
     try {
-      const result = await cancelOffer({
+      await cancelOffer({
         connection,
         buyer: publicKey,
         escrowAccountAddressString,
         nftAddressString: nftAddress,
         signTransaction,
       });
-      console.log(result);
       await API.graphql(
         graphqlOperation(updateTxHistory, {
           input: { id, status: TransactionStatus.CANCELED },
@@ -92,7 +91,6 @@ export const Main = () => {
         sellerNFTAddressStr: nftAddress,
         signTransaction,
       });
-      console.log(result);
       await API.graphql(
         graphqlOperation(updateTxHistory, {
           input: { id, status: TransactionStatus.ACCEPTED },
