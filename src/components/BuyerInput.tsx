@@ -15,8 +15,13 @@ import { requestOffer } from "../web3/requestOffer";
 interface BuyerInputProps {
   nftAddress: string;
   sellerAddress: string;
+  isRequested: boolean;
 }
-export const BuyerInput = ({ nftAddress, sellerAddress }: BuyerInputProps) => {
+export const BuyerInput = ({
+  nftAddress,
+  sellerAddress,
+  isRequested,
+}: BuyerInputProps) => {
   const { connection } = useConnection();
   const { publicKey, signTransaction } = useWallet();
   const loadingDispatch = useLoadingDispatch();
@@ -37,6 +42,7 @@ export const BuyerInput = ({ nftAddress, sellerAddress }: BuyerInputProps) => {
 
   const isDisabled = () => {
     return (
+      isRequested ||
       amount <= 0 ||
       sellerAddress.length === 0 ||
       loadingState.show ||

@@ -4,7 +4,11 @@ import { PublicKey } from "@solana/web3.js";
 import { graphqlOperation } from "aws-amplify";
 import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
-import { GetTxHistoryByNFTAddressQuery, TxHistory } from "../../API";
+import {
+  GetTxHistoryByNFTAddressQuery,
+  TransactionStatus,
+  TxHistory,
+} from "../../API";
 import { Layout } from "../../components/Layout";
 import { BuyerInput } from "../../components/BuyerInput";
 import { ImageType, MetaImage } from "../../components/MetaImage";
@@ -64,7 +68,7 @@ export default function Detail() {
           className="text-gray-700"
           onClick={() => router.back()}
         >{`< Back`}</button>
-        {transaction && (
+        {transaction && transaction.status === TransactionStatus.REQUESTED && (
           <div className="w-full rounded-md bg-pink-200 p-4 ml-auto mr-auto">
             <div className="grid grid-cols-10">
               <div className="sm:col-span-8 col-span-10">
@@ -100,6 +104,7 @@ export default function Detail() {
           </div>
           <div className="w-full md:w-7/12 ml-auto mr-auto px-4">
             <BuyerInput
+              isRequested={transaction?.status === TransactionStatus.REQUESTED}
               nftAddress={nft as string}
               sellerAddress={sellerAddress as string}
             />
