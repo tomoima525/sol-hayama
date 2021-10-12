@@ -27,7 +27,7 @@ const Home: NextPage = () => {
   return (
     <Layout formatRpc={formatRpc}>
       <Head>
-        <title>hayama-sol</title>
+        <title>sol-hayama</title>
       </Head>
       <div className="container mx-auto justify-center">
         <Main />
