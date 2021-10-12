@@ -4,6 +4,7 @@ import { graphqlOperation } from "aws-amplify";
 import BigNumber from "bignumber.js";
 import { useRef, useState } from "react";
 import { string } from "superstruct";
+import { CreateTxHistoryMutation, TxHistory } from "../API";
 import { feePercentage } from "../constants";
 import {
   useLoadingDispatch,
@@ -16,11 +17,13 @@ interface BuyerInputProps {
   nftAddress: string;
   sellerAddress: string;
   isRequested: boolean;
+  onSubmitted: (transaction: TxHistory | undefined) => void;
 }
 export const BuyerInput = ({
   nftAddress,
   sellerAddress,
   isRequested,
+  onSubmitted,
 }: BuyerInputProps) => {
   const { connection } = useConnection();
   const { publicKey, signTransaction } = useWallet();
@@ -92,8 +95,12 @@ export const BuyerInput = ({
       });
       loadingDispatch({ type: "SHOW_LOADING" });
       console.log(result);
-      await API.graphql(graphqlOperation(createTxHistory, { input: result }));
+      const createTx = (await API.graphql(
+        graphqlOperation(createTxHistory, { input: result })
+      )) as { data: CreateTxHistoryMutation };
       resetInputs();
+      console.log("====", createTx);
+      onSubmitted(createTx.data.createTxHistory || undefined);
     } catch (e) {
       console.error(e);
       setErrorMessage((e as Error).message);
