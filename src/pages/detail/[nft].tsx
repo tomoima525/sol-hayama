@@ -60,6 +60,10 @@ export default function Detail() {
     }
   };
 
+  const handlePostSubmit = (transaction: TxHistory | undefined) => {
+    setTransaction(transaction);
+  };
+
   const formatRpc = "";
   return (
     <Layout formatRpc={formatRpc}>
@@ -106,6 +110,7 @@ export default function Detail() {
             <BuyerInput
               isRequested={transaction?.status === TransactionStatus.REQUESTED}
               nftAddress={nft as string}
+              onSubmitted={handlePostSubmit}
               sellerAddress={sellerAddress as string}
             />
           </div>
