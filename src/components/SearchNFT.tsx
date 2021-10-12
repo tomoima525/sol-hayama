@@ -1,6 +1,4 @@
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
-import { PublicKey } from "@solana/web3.js";
 import { useState } from "react";
 import { useMetadata } from "../hooks/useMetadata";
 import { NFTCard } from "./NFTcard";
@@ -72,7 +70,13 @@ export const SearchNFT = () => {
         <div className="flex overflow-x-scroll sm:col-span-4 md:col-span-6">
           {metadataList.map((metadata) => {
             return (
-              metadata && <NFTCard key={metadata.mint} metadata={metadata} />
+              metadata && (
+                <NFTCard
+                  key={metadata.mint}
+                  metadata={metadata}
+                  sellerAddress={sellerAddress}
+                />
+              )
             );
           })}
         </div>

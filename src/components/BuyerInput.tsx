@@ -3,6 +3,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { graphqlOperation } from "aws-amplify";
 import BigNumber from "bignumber.js";
 import { useRef, useState } from "react";
+import { string } from "superstruct";
 import { feePercentage } from "../constants";
 import {
   useLoadingDispatch,
@@ -10,15 +11,18 @@ import {
 } from "../contexts/LoadingContext";
 import { createTxHistory } from "../graphql/mutations";
 import { requestOffer } from "../web3/requestOffer";
-export const BuyerInput = () => {
+
+interface BuyerInputProps {
+  nftAddress: string;
+  sellerAddress: string;
+}
+export const BuyerInput = ({ nftAddress, sellerAddress }: BuyerInputProps) => {
   const { connection } = useConnection();
   const { publicKey, signTransaction } = useWallet();
   const loadingDispatch = useLoadingDispatch();
   const loadingState = useLoadingState();
   const [amount, setAmount] = useState<number>(0);
   const [fee, setFee] = useState<number>(0);
-  const [nftAddress, setNftAddress] = useState("");
-  const [sellerAddress, setSellerAddress] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const amountInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,16 +35,6 @@ export const BuyerInput = () => {
     setFee(fee.toNumber());
   };
 
-  const handleChangeNFTAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNftAddress(e.target.value ? e.target.value.toString() : "");
-  };
-
-  const handleChangeSellerAddress = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSellerAddress(e.target.value ? e.target.value.toString() : "");
-  };
-
   const isDisabled = () => {
     return (
       amount <= 0 ||
@@ -51,8 +45,6 @@ export const BuyerInput = () => {
   };
 
   const resetInputs = () => {
-    setSellerAddress("");
-    setNftAddress("");
     setAmount(0);
     setFee(0);
     setErrorMessage("");
@@ -110,7 +102,7 @@ export const BuyerInput = () => {
         <div className="mt-5 md:mt-0 md:col-span-2">
           <div className="p-4 sm:px-0">
             <h3 className="text-lg font-medium leading-6 text-gray-900">
-              Buyer Request
+              Offer Request
             </h3>
             <p className="mt-1 text-sm text-gray-600">
               Fill in information below to make your offer
@@ -120,7 +112,7 @@ export const BuyerInput = () => {
             <div className="shadow overflow-hidden sm:rounded-md">
               <div className="px-4 py-5 bg-white sm:p-6">
                 <div className="grid grid-cols-6 gap-x-6 gap-y-4">
-                  <div className="col-span-6 sm:col-span-4">
+                  <div className="col-span-6 sm:col-span-5">
                     <label
                       htmlFor="token-address"
                       className="block text-sm font-medium text-gray-700"
@@ -131,13 +123,13 @@ export const BuyerInput = () => {
                       type="text"
                       name="token-address"
                       id="token-address"
+                      readOnly
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm  sm:text-sm border-gray-300 rounded-md"
-                      onChange={handleChangeNFTAddress}
                       value={nftAddress}
                     />
                   </div>
 
-                  <div className="col-span-6 sm:col-span-4">
+                  <div className="col-span-6 sm:col-span-5">
                     <label
                       htmlFor="seller-address"
                       className="block text-sm font-medium text-gray-700"
@@ -148,8 +140,8 @@ export const BuyerInput = () => {
                       type="text"
                       name="seller-address"
                       id="seller-address"
+                      readOnly
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      onChange={handleChangeSellerAddress}
                       value={sellerAddress}
                     />
                   </div>

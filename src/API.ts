@@ -330,6 +330,33 @@ export type GetTxHistoryBySellerAddressQuery = {
   } | null,
 };
 
+export type GetTxHistoryByNFTAddressQueryVariables = {
+  nftAddress?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelTxHistoryFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type GetTxHistoryByNFTAddressQuery = {
+  getTxHistoryByNFTAddress?:  {
+    __typename: "ModelTxHistoryConnection",
+    items?:  Array< {
+      __typename: "TxHistory",
+      id: string,
+      buyerAddress: string,
+      sellerAddress: string,
+      escrowAddress: string,
+      nftAddress: string,
+      offeredAmount: number,
+      status: TransactionStatus,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type OnCreateTxHistorySubscription = {
   onCreateTxHistory?:  {
     __typename: "TxHistory",

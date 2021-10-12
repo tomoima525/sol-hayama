@@ -103,3 +103,33 @@ export const getTxHistoryBySellerAddress = /* GraphQL */ `
     }
   }
 `;
+export const getTxHistoryByNFTAddress = /* GraphQL */ `
+  query GetTxHistoryByNFTAddress(
+    $nftAddress: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelTxHistoryFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    getTxHistoryByNFTAddress(
+      nftAddress: $nftAddress
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        buyerAddress
+        sellerAddress
+        escrowAddress
+        nftAddress
+        offeredAmount
+        status
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
