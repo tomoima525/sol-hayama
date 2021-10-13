@@ -28,6 +28,18 @@ const Home: NextPage = () => {
     <Layout formatRpc={formatRpc}>
       <Head>
         <title>sol-hayama</title>
+        <meta property="og:url" content="https://www.sol-hayama.com" />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:title"
+          content="Hayama - NFT trading platform on Solana"
+        />
+        <meta name="twitter:card" content="summary" />
+        <meta
+          property="og:description"
+          content="Trading NFT without hassle. Decentralized Escrow service on Solana block-chain"
+        />
+        <meta property="og:image" content="/ogp_image.png" />
       </Head>
       <div className="container mx-auto justify-center">
         <Main />
