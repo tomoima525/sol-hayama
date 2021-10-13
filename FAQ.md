@@ -12,6 +12,11 @@
 
 - The escrow account and the token account that receives your SOL requires rent fee to exist on Solana block-chain. When the transaction completes, sol-hayama closes those account and you will get your rent fee back to your wallet
 
+
+### I want to test it on devnet!
+
+- Sure! Try https://deploy-dev.sol-hayama.com/ which looks at devnet
+
 # Terms and Conditions, Disclaimer
 
 - By using this service you agree to the terms and disclaimer below
