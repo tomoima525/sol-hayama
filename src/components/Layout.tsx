@@ -35,7 +35,9 @@ export const Layout = ({
     <div className="w-fullscreen flex-grow">{children}</div>
 
     <footer className="flex items-center boarder-t-2 boarder-gray-100 bg-pink-300 py-2 px-10 sm:justify-between sm:space-x-10 bottom-0">
-      <div className="font-mono text-xs text-gray-600">Hayama Lab © 2021</div>
+      <div className="font-mono text-xs text-gray-600">
+        2021 Sol Hayama All rights reserved
+      </div>
       <div className="flex gap-3 h-5">
         <a
           href={`https://github.com/tomoima525/sol-hayama`}

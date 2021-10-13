@@ -1,8 +1,64 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sol Hayama 🏖
 
-## Getting Started
+[sol-hayama](https://www.sol-hayama.com) is the decentralized NFT trading platform built on top of Solana block-chain.
 
-First, run the development server:
+- Search NFTs from a user's account(supports metaplex data structure)
+- A programatically generated escrow agent will manage the transaction and all transactions can be see in Solana explorer
+
+This is the frontend portion of the service. A smart contract(aka Program) that coordinates transactions is in [escrow-program repo](https://github.com/tomoima525/escrow-program)
+
+## Setup
+
+```
+yarn install
+```
+
+## Prerequisite
+
+**Associated Token Account**
+
+- You need Associated Token Account for [Native Mint](https://spl.solana.com/token#wrapping-sol) to receive the fee
+
+```
+// Make sure the owner has enough funding
+$ spl-token create-account  So11111111111111111111111111111111111111112
+```
+
+**ProgramId for Escrow**
+
+- You also need to deploy the program on localhost's test-validator. See the instruction in the escrow-program-repo
+- After you deployed the contract, you should update the programId defined in `escrowProgramPublicKey` which is located at [constants.ts](https://github.com/tomoima525/sol-hayama/blob/main/src/constants.ts)
+
+```
+export const escrowProgramPublicKey = new PublicKey(
+  "7V3CWKtaLtYqx82Rm96ph8DutCP2LQpfkz8URpH3XAxT" // this should be your program Id
+);
+```
+
+**Amplify**
+
+- This app caches transaction data on DynamoDB for performance purpose. We use GraphQL(AppSync) from Amplify.
+
+```
+// use npm v14
+$ npm install -g @aws-amplify/cli
+$ amplify init
+? Do you want to use an existing environment? Yes
+? Choose the environment you would like to use: dev
+```
+
+## Running locally
+
+- Create `.env.local` (env file for nextjs) file and add below
+
+```
+NEXT_PUBLIC_LOCAL_ADDRESS=http://localhost:8899 // if you don't add this then the app will look into NEXT_PUBLIC_BUILD_ENV
+NEXT_PUBLIC_FEE_PERCENTAGE=0.04
+NEXT_PUBLIC_FEE_RECEIVER=Ae1c6oswsczoM7YtUdFLUviXMSvKgZTsZ3sJaPTyuVah // Change this to your associated account token that receives fee.
+NEXT_PUBLIC_BUILD_ENV=dev
+```
+
+- Then start the app
 
 ```bash
 npm run dev
@@ -10,25 +66,14 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# License
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```
+Copyright 2021 Tomoaki Imai
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
