@@ -1,5 +1,10 @@
 # FAQ
 
+### What's Hayama?
+
+- Hayama is a beautiful beach in Japan 
+https://en.japantravel.com/kanagawa/isshiki-beach-hayama-in-the-summer/14660
+
 ### Where is my deposit when I make an offer?
 
 - Your deposit will be hold by the escrow account on Solana block-chain securely.
