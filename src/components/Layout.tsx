@@ -40,6 +40,14 @@ export const Layout = ({
       </div>
       <div className="flex gap-3 h-5">
         <a
+          href={`https://github.com/tomoima525/sol-hayama/blob/main/FAQ.md`}
+          target="_blank"
+          rel="noreferrer"
+          className=" self-center font-mono text-xs text-gray-600"
+        >
+          {`FAQ & ToC`}
+        </a>
+        <a
           href={`https://github.com/tomoima525/sol-hayama`}
           target="_blank"
           rel="noreferrer"
