@@ -3,7 +3,7 @@
 [sol-hayama](https://www.sol-hayama.com) is the decentralized NFT trading platform built on top of Solana block-chain.
 
 - Search NFTs from a user's account(supports metaplex data structure)
-- A programatically generated escrow agent will manage the transaction and all transactions can be see in Solana explorer
+- A programmatically generated escrow agent will manage the transaction and all transactions can be seen in Solana explorer
 
 This is the frontend portion of the service. A smart contract(aka Program) that coordinates transactions is in [escrow-program repo](https://github.com/tomoima525/escrow-program)
 
@@ -37,7 +37,7 @@ export const escrowProgramPublicKey = new PublicKey(
 
 **Amplify**
 
-- This app caches transaction data on DynamoDB for performance purpose. We use GraphQL(AppSync) from Amplify.
+- This app caches transaction data on DynamoDB for performance purposes. We use GraphQL(AppSync) from Amplify.
 
 ```
 // use npm v14
