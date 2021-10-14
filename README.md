@@ -7,6 +7,11 @@
 
 This is the frontend portion of the service. A smart contract(aka Program) that coordinates transactions is in [escrow-program repo](https://github.com/tomoima525/escrow-program)
 
+## Architecture in nutshell
+
+![architecture](https://user-images.githubusercontent.com/6277118/137241270-4e88c0ac-31f0-4948-b310-5819e11680af.png)
+
+
 ## Setup
 
 ```
