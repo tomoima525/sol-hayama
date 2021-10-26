@@ -8,6 +8,7 @@ import { LoadingProvider } from "../contexts/LoadingContext";
 import { ModalProvider } from "../contexts/ModalContext";
 import { SearchProvider } from "../contexts/SearchContext";
 import React from "react";
+import { Seo } from "../components/Seo";
 
 const WalletConnectionProvider = dynamic(() => import("../components/Wallet"), {
   ssr: false,
@@ -29,18 +30,28 @@ const network = () => {
 function HayamaApp({ Component, pageProps }: AppProps) {
   const localAddress = process.env.NEXT_PUBLIC_LOCAL_ADDRESS;
   return (
-    <LoadingProvider>
-      <ModalProvider>
-        <SearchProvider>
-          <WalletConnectionProvider
-            network={network()}
-            localAddress={localAddress}
-          >
-            <Component {...pageProps} />
-          </WalletConnectionProvider>
-        </SearchProvider>
-      </ModalProvider>
-    </LoadingProvider>
+    <>
+      <Seo
+        imgHeight={508}
+        imgUrl="/sol-hayama.png"
+        imgWidth={1110}
+        path="https://www.sol-hayama.com"
+        title="Hayama"
+        pageDescription="Hayama - NFT trading platform on Solana"
+      />
+      <LoadingProvider>
+        <ModalProvider>
+          <SearchProvider>
+            <WalletConnectionProvider
+              network={network()}
+              localAddress={localAddress}
+            >
+              <Component {...pageProps} />
+            </WalletConnectionProvider>
+          </SearchProvider>
+        </ModalProvider>
+      </LoadingProvider>
+    </>
   );
 }
 export default HayamaApp;
