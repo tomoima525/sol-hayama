@@ -14,6 +14,7 @@ import { BuyerInput } from "./BuyerInput";
 import { BuyerTab } from "./BuyerTab";
 import { Loading } from "./dialogs/Loading";
 import { ModalDialog } from "./dialogs/ModalDialog";
+import { MyNFT } from "./MyNFT";
 import { SearchNFT } from "./SearchNFT";
 import { SellerTab } from "./SellerTab";
 
@@ -126,6 +127,7 @@ export const Main = () => {
 
   return (
     <div>
+      <MyNFT />
       <SearchNFT />
       <div className="mt-6 sm:mt-6">
         <div className="p-4 sm:px-0 sm:py-3">
