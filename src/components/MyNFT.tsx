@@ -16,7 +16,7 @@ export const MyNFT = () => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [publicKey]);
 
   const generateMessage = () => {
     if (!publicKey) {
