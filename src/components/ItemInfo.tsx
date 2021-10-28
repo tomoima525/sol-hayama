@@ -1,4 +1,20 @@
 import { useWallet } from "@solana/wallet-adapter-react";
+import React from "react";
+import {
+  EmailIcon,
+  EmailShareButton,
+  FacebookIcon,
+  FacebookMessengerIcon,
+  FacebookMessengerShareButton,
+  FacebookShareButton,
+  FacebookShareCount,
+  TelegramIcon,
+  TelegramShareButton,
+  TwitterIcon,
+  TwitterShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+} from "react-share";
 import { useLoadingState } from "../contexts/LoadingContext";
 
 interface BuyerInputProps {
@@ -32,6 +48,23 @@ export const ItemInfo = ({
   const explorerAddress = `https://explorer.solana.com/address/${nftAddress}${
     process.env.NEXT_PUBLIC_BUILD_ENV === "dev" && "?cluster=devnet"
   }`;
+  const shareUrl = ({
+    nftAddress,
+    sellerAddress,
+  }: {
+    nftAddress: string;
+    sellerAddress: string;
+  }) => {
+    let host = `${
+      process.env.NEXT_PUBLIC_BUILD_ENV === "dev"
+        ? "https://deploy-dev.sol-hayama.com"
+        : "https://www.sol-hayama.com"
+    }`;
+    return host + `/detail/${nftAddress}?sellerAddress=${sellerAddress}`;
+  };
+  const url = shareUrl({ nftAddress, sellerAddress });
+  const title =
+    "Checkout my #nft on @sol_hayama! Click this link to make an offer #solana #solananft";
   return (
     <div className="mt-10 sm:mt-0">
       <div className="md:grid md:gap-6">
@@ -42,7 +75,7 @@ export const ItemInfo = ({
             </h3>
             <p className="mt-1 text-sm text-gray-600">
               {
-                "Share/Send this item's link to others so they can may an offer!"
+                "Share/Send this item's link to others so they can make an offer!"
               }
             </p>
           </div>
@@ -67,15 +100,30 @@ export const ItemInfo = ({
                 </div>
               </div>
             </div>
-            <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-              <button
-                type="submit"
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                disabled={isDisabled()}
-                onClick={handleSubmit}
-              >
-                Share this item
-              </button>
+            <div className="px-4 py-3 bg-gray-50 text-center sm:px-6">
+              <div className="mr-2 text-center inline-block align-top">
+                <TwitterShareButton url={url} title={title}>
+                  <TwitterIcon size={32} round />
+                </TwitterShareButton>
+              </div>
+
+              <div className="mr-2 text-center inline-block align-top">
+                <TelegramShareButton url={url} title={title}>
+                  <TelegramIcon size={32} round />
+                </TelegramShareButton>
+              </div>
+
+              <div className="mr-2 text-center inline-block align-top">
+                <WhatsappShareButton url={url} title={title} separator=":: ">
+                  <WhatsappIcon size={32} round />
+                </WhatsappShareButton>
+              </div>
+
+              <div className="mr-2 text-center inline-block align-top">
+                <EmailShareButton url={url} subject={title} body="body">
+                  <EmailIcon size={32} round />
+                </EmailShareButton>
+              </div>
             </div>
           </div>
         </div>
