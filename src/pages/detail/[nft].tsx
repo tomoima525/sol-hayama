@@ -1,5 +1,5 @@
 import API from "@aws-amplify/api";
-import { useConnection } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { graphqlOperation } from "aws-amplify";
 import { useRouter } from "next/dist/client/router";
@@ -15,9 +15,11 @@ import { ImageType, MetaImage } from "../../components/MetaImage";
 import { getTxHistoryByNFTAddress } from "../../graphql/queries";
 import { Metadata } from "../../schema/metadata";
 import { getMetadata } from "../../web3/metaplex/metadataHelpers";
+import { ItemInfo } from "../../components/ItemInfo";
 
 export default function Detail() {
   const router = useRouter();
+  const { publicKey } = useWallet();
   const { connection } = useConnection();
   const [metadata, setMetadata] = useState<Metadata | undefined>(undefined);
   const [transaction, setTransaction] = useState<TxHistory | undefined>(
@@ -107,12 +109,24 @@ export default function Detail() {
             </div>
           </div>
           <div className="w-full md:w-7/12 ml-auto mr-auto px-4">
-            <BuyerInput
-              isRequested={transaction?.status === TransactionStatus.REQUESTED}
-              nftAddress={nft as string}
-              onSubmitted={handlePostSubmit}
-              sellerAddress={sellerAddress as string}
-            />
+            {sellerAddress === publicKey?.toBase58() ? (
+              <ItemInfo
+                isRequested={
+                  transaction?.status === TransactionStatus.REQUESTED
+                }
+                nftAddress={nft as string}
+                sellerAddress={sellerAddress as string}
+              />
+            ) : (
+              <BuyerInput
+                isRequested={
+                  transaction?.status === TransactionStatus.REQUESTED
+                }
+                nftAddress={nft as string}
+                onSubmitted={handlePostSubmit}
+                sellerAddress={sellerAddress as string}
+              />
+            )}
           </div>
         </div>
       </section>

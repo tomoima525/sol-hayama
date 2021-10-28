@@ -3,7 +3,6 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { graphqlOperation } from "aws-amplify";
 import BigNumber from "bignumber.js";
 import { useRef, useState } from "react";
-import { string } from "superstruct";
 import { CreateTxHistoryMutation, TxHistory } from "../API";
 import { feePercentage } from "../constants";
 import {
@@ -99,7 +98,6 @@ export const BuyerInput = ({
         graphqlOperation(createTxHistory, { input: result })
       )) as { data: CreateTxHistoryMutation };
       resetInputs();
-      console.log("====", createTx);
       onSubmitted(createTx.data.createTxHistory || undefined);
     } catch (e) {
       console.error(e);
