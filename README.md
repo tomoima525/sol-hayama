@@ -1,6 +1,6 @@
 # Sol Hayama 🏖
 
-[sol-hayama](https://www.sol-hayama.com) is the decentralized NFT trading platform built on top of Solana block-chain.
+[sol-hayama](https://sol-hayama.tomoima525.com) is the decentralized NFT trading platform built on top of Solana block-chain.
 
 - Search NFTs from a user's account(supports metaplex data structure)
 - A programmatically generated escrow agent will manage the transaction and all transactions can be seen in Solana explorer
